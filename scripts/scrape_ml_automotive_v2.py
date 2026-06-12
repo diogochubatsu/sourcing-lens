@@ -1,4 +1,3 @@
-/usr/bin/bash: warning: setlocale: LC_ALL: cannot change locale (pt_BR.UTF-8)
 #!/usr/bin/env python3
 """Scrape automotive tools from Mercado Livre via Decodo API."""
 import os, sys, re, time, json, requests
