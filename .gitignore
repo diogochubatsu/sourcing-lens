@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*.egg
+
+# Environment
+config/.env
+.env
+*.env.local
+
+# Data
+data/images/
+data/*.json
+tmp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temp screenshots from vision analysis
+*.png
+/ml_*.png
+
+# Subagent temp scripts
+/tmp/
