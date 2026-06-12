@@ -20,6 +20,7 @@ sales data, price tracking, confidence-scored matches.
 7. [Scraping Architecture](#scraping-architecture)
 8. [Non-Negotiables](#non-negotiables)
 9. [Evolution Roadmap](#evolution-roadmap)
+10. [Quick Start](#quick-start)
 
 ---
 
@@ -177,8 +178,7 @@ Casa              Copos Térmicos       Stanley Quencher
                   Cozinha              Potes Herméticos
 
 Ferramentas       Ferramentas          Ferramentas
-                  (mesmo L1/L2/L3 por   (categoria nova,
-                   enquanto)            L3 genérico)
+                  (genérico)
 
 Moda              Bolsas               Bolsas
                   Mochilas             Mochilas
@@ -215,9 +215,20 @@ Resultado: **zero falsos positivos** entre subcategorias.
 | `category_l3` | VARCHAR | Categoria nível 3 (usada no matching) |
 | `embedding` | VECTOR(512) | CLIP embedding da imagem principal |
 | `url` | TEXT | URL do produto na plataforma |
-| `is_active` | BOOLEAN | Produto ativo (não desativado) |
+| `is_active` | BOOLEAN | Produto ativo |
 | `created_at` | TIMESTAMP | Data de inserção |
 | `last_updated` | TIMESTAMP | Última atualização |
+
+### Tabela Matches
+
+| Coluna | Tipo | Uso |
+|--------|------|-----|
+| `id` | SERIAL PK | Identificador |
+| `product_a_id` | INTEGER FK | Produto Amazon BR |
+| `product_b_id` | INTEGER FK | Produto ML |
+| `confidence` | DECIMAL | Score CLIP (0.0 a 1.0) |
+| `match_method` | VARCHAR | `embedding_clip` |
+| `created_at` | TIMESTAMP | Data do match |
 
 ---
 
@@ -256,13 +267,58 @@ RESULT: 153 matches, todos CLIP, todos intra-L3
 
 ---
 
+## Database (dev)
+
+```bash
+Host: localhost
+Port: 5432
+Database: arbtbr
+User: hermes1688
+Password: Lndgcp@#12
+
+# Conectar
+psql -h localhost -U hermes1688 -d arbtbr
+```
+
+### Consultas Úteis
+
+```sql
+-- Total de produtos ativos
+SELECT COUNT(*) FROM products WHERE is_active=true;
+
+-- Por plataforma
+SELECT platform, COUNT(*) FROM products WHERE is_active=true GROUP BY platform;
+
+-- Por categoria
+SELECT category_l1, COUNT(*) FROM products WHERE is_active=true GROUP BY category_l1 ORDER BY category_l1;
+
+-- Matches por método
+SELECT match_method, COUNT(*) FROM matches GROUP BY match_method;
+
+-- Melhores matches (alta confiança)
+SELECT m.confidence, a.title as br, b.title as ml
+FROM matches m
+JOIN products a ON m.product_a_id = a.id
+JOIN products b ON m.product_b_id = b.id
+WHERE m.confidence >= 0.90
+ORDER BY m.confidence DESC;
+
+-- Vector search manual (buscar similar ao produto 164 no ML)
+SELECT id, platform_id, title,
+       1 - (embedding <=> (SELECT embedding FROM products WHERE id=164)::vector) as sim
+FROM products WHERE platform='ml' AND category_l1='Audio'
+ORDER BY sim DESC LIMIT 5;
+```
+
+---
+
 ## Scraping Architecture
 
 ### Mercado Livre — Decodo API
 
 ```json
 POST https://scraper-api.decodo.com/v2/scrape
-Authorization: Basic {base64(user:pass)}
+Authorization: Basic VTAwMDA0MjE0NDM6UFdfMWI1NGIwZDY1ZGUzZGEyY2MyMmFiNGU1OTU4OTQ0Nzgz
 {
   "url": "https://www.mercadolivre.com.br/mais-vendidos/MLB{id}",
   "headless": "html",
@@ -273,40 +329,48 @@ Authorization: Basic {base64(user:pass)}
 
 | MLB ID | Categoria | Funciona? |
 |--------|-----------|-----------|
-| MLB263532 | Ferramentas | ✅ |
-| MLB3835 | Áudio | ✅ |
-| MLB3813 | Acess. Celular | ✅ |
-| MLB417704 | Smartwatches | ✅ |
-| MLB1457 | Bolsas/Malas | ✅ |
-| MLB3127 | Mochilas | ✅ |
-| MLB108786 | Moda Íntima | ❌ (JS-rendered, usar browser) |
-| MLB430391 | Moda Praia | ❌ (sempre vazio) |
+| MLB263532 | Ferramentas | ✅ Decodo HTML |
+| MLB3835 | Áudio | ✅ Decodo HTML |
+| MLB3813 | Acess. Celular | ✅ Decodo HTML |
+| MLB417704 | Smartwatches | ✅ Decodo HTML |
+| MLB1457 | Bolsas/Malas | ✅ Decodo HTML |
+| MLB3127 | Mochilas | ✅ Decodo HTML |
+| MLB1430 | Calçados,Roupas,Bolsas | ✅ Browser (poly-card) |
+| MLB108786 | Moda Íntima | ❌ JS-rendered |
 
 ### Amazon BR/US — Hermes Browser
 
-Amazon bloqueia todos os scrapers programáticos (requests,
-Playwright, Decodo). Único método que funciona: Hermes browser
-(stealth mode).
+Amazon bloqueia todos os scrapers programáticos. Único método
+que funciona: Hermes browser (stealth mode).
 
 ```javascript
-// Extracting products from best sellers page
+// Extracting from best sellers page
 const products = Array.from(
   document.querySelectorAll('.zg-grid-general-faceout')
 ).map(el => ({
   asin: el.querySelector('a[href*="/dp/"]').href.match(/\/dp\/([A-Z0-9]{10})/)[1],
   title: el.querySelector('img').getAttribute('alt'),
   price: el.textContent.match(/R\$\s*[\d.,]+/)[0],
-  imgUrl: el.querySelector('img').getAttribute('data-a-hires') || 
+  imgUrl: el.querySelector('img').getAttribute('data-a-hires') ||
           el.querySelector('img').getAttribute('src'),
 }));
 ```
 
-### ML Fashion — Estrutura Diferente
+---
 
-Moda no ML usa estrutura diferente:
-- Selector: `div[class*="poly-card"]` (não `andes-card`)
-- Links: `MLB-{number}` (não `/p/MLB{number}`)
-- Preço: último `R$\s*[\d.,]+` no texto
+## Tech Stack
+
+| Component | Tech |
+|-----------|------|
+| Backend | FastAPI (Python 3.11) |
+| Frontend | Vanilla HTML/CSS/JS |
+| Database | PostgreSQL 15 + pgvector |
+| Embeddings | CLIP ViT-B-32 (512 dim) via sentence-transformers |
+| Scraping ML | Decodo Scraper API |
+| Scraping Amazon | Hermes browser (stealth) |
+| Matching | pgvector cosine similarity, intra-L3 |
+| Server | systemd (arbitlens-5000), port 5000 |
+| VM | GCP, 34.30.146.117 |
 
 ---
 
@@ -324,6 +388,7 @@ Moda no ML usa estrutura diferente:
 ## Evolution Roadmap
 
 ### v0.1 ✅ (Completa)
+
 ```
 [✅] CLIP embeddings + pgvector
 [✅] 3-level category hierarchy (L1/L2/L3)
@@ -332,11 +397,13 @@ Moda no ML usa estrutura diferente:
 [✅] Scraping: Decodo ML + Browser Amazon
 [✅] Dashboard com categorias, badges, histórico
 [✅] 14 categorias (incluindo moda)
+[✅] Documentação completa (README, SOUL, skills)
 ```
 
 ### v0.2 — Sales Pipeline & Expansão (Em andamento)
+
 ```
-[✅] Fashion categories onborded (5 novas)
+[✅] Fashion categories onboarded (5 novas)
 [⚠️] 41% com dados de venda (meta: 60%+)
 [ ] Cron de scraping automático
 [ ] Pipeline de vendas: ML best sellers → Decodo
@@ -344,14 +411,16 @@ Moda no ML usa estrutura diferente:
 [ ] Novas categorias: Pet Shop, Cozinha, Jardim
 ```
 
-### v0.3 — Cross-Border CLIP (BR vs US)
+### v0.3 — Cross-Border Intelligence
+
 ```
-[ ] Adaptar matching para amazon_br vs amazon_us
-[ ] Amazon US como fonte de tendências e referência
+[ ] Amazon US como fonte de referência de preços
 [ ] Alertas de preço (BR vs US)
+[ ] Histórico de tendências por categoria
 ```
 
 ### v0.4 — Maturidade
+
 ```
 [ ] 5.000+ produtos
 [ ] 1.000+ matches
@@ -367,30 +436,26 @@ Moda no ML usa estrutura diferente:
 ```bash
 # Server
 sudo systemctl start arbitlens-5000
+sudo systemctl status arbitlens-5000
 
 # API
 curl http://localhost:5000/api/stats
+curl http://localhost:5000/api/products?category=Ferramentas
 
-# Run matching for all categories
+# Matching
 .venv/bin/python3 scripts/matching_v6.py
 
-# Data quality audit
+# Data quality
 .venv/bin/python3 scripts/data_quality_gate.py
+.venv/bin/python3 scripts/data_quality_gate.py --category Audio
 
 # Generate embeddings for new products
-.venv/bin/python3 -c "
-from scripts.db import query
-from sentence_transformers import SentenceTransformer
-model = SentenceTransformer('clip-ViT-B-32')
-products = query('SELECT id, image_urls FROM products WHERE embedding IS NULL')
-for p in products:
-    # ... generate and store embedding
-"
+.venv/bin/python3 scripts/_fix_embeddings.py
 
-# Find similar products (product ID 164)
+# Similarity search
 .venv/bin/python3 scripts/find_similar.py --product-id 164
 
-# Daily price snapshot
+# Daily snapshot
 .venv/bin/python3 scripts/daily_snapshot.py
 ```
 
