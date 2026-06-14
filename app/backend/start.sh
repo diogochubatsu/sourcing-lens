@@ -16,7 +16,7 @@ fi
 cd "$SCRIPT_DIR"
 
 if [ "$1" = "--reload" ]; then
-    exec python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    exec python -m uvicorn main:app --host 0.0.0.0 --port 5000 --reload
 else
     exec python main.py
 fi
