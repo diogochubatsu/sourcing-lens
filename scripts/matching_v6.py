@@ -12,6 +12,22 @@ from scripts.db import query, execute
 
 THRESHOLD = 0.70
 
+# Per-category overrides — categories where CLIP gets fooled by
+# visually similar but semantically different products.
+# Increase threshold to filter false positives.
+CATEGORY_THRESHOLDS = {
+    "Ferramentas": 0.85,  # wrenches, drills, screwdrivers look alike
+    "Casa": 0.75,          # many similar household items
+}
+
+def get_threshold(category_l1):
+    try:
+        if THRESHOLD_OVERRIDE is not None:
+            return THRESHOLD_OVERRIDE
+    except NameError:
+        pass
+    return CATEGORY_THRESHOLDS.get(category_l1, THRESHOLD)
+
 
 def run_matching(category_l1, l3=None):
     """Run CLIP matching for a single L1+L3 combination using batch queries."""
@@ -60,7 +76,7 @@ def run_matching(category_l1, l3=None):
                 ORDER BY embedding <=> %s::vector LIMIT 1
             """, (a['embedding'], category_l1, a['embedding']))
         
-        if best and best[0]['sim'] >= THRESHOLD:
+        if best and best[0]['sim'] >= get_threshold(category_l1):
             b = best[0]
             all_scores.append((
                 a['id'], b['id'], b['sim'] * 100,
@@ -89,22 +105,55 @@ def run_matching(category_l1, l3=None):
 
 # Main
 if __name__ == "__main__":
-    print(f"Matching v6 — CLIP embeddings + intra-L3 (threshold {THRESHOLD*100:.0f}%)")
+    import argparse
+    parser = argparse.ArgumentParser(description='Run CLIP matching for categories.')
+    parser.add_argument('--category', type=str, help='Run only this category_l1 (e.g. Ferramentas)')
+    parser.add_argument('--threshold', type=float, help='Override default threshold (0.0-1.0)')
+    args = parser.parse_args()
+
+    if args.threshold:
+        THRESHOLD_OVERRIDE = args.threshold
+    else:
+        THRESHOLD_OVERRIDE = None
+
+    def get_threshold_eff(cat):
+        if THRESHOLD_OVERRIDE is not None:
+            return THRESHOLD_OVERRIDE
+        return CATEGORY_THRESHOLDS.get(cat, THRESHOLD)
+
+    print(f"Matching v6 — CLIP embeddings + intra-L3 (default threshold {THRESHOLD*100:.0f}%)")
+    if args.category:
+        print(f"  Filter: only category_l1 = '{args.category}'")
+    if args.threshold:
+        print(f"  Threshold override: {args.threshold*100:.0f}%")
     print("NOTE: Only updates matches per category. Does NOT delete global matches.\n")
 
     total = 0
 
     # Get all L1+L3 categories with both platforms (using category_l1)
-    l3_cats = query("""
-        SELECT a.category_l1, a.category_l3
-        FROM products a JOIN products m 
-          ON a.category_l1 = m.category_l1 AND a.category_l3 = m.category_l3
-        WHERE a.platform='amazon_br' AND m.platform='ml'
-          AND a.embedding IS NOT NULL AND m.embedding IS NOT NULL
-          AND a.is_active=true AND m.is_active=true
-        GROUP BY a.category_l1, a.category_l3
-        ORDER BY a.category_l1, a.category_l3
-    """)
+    if args.category:
+        l3_cats = query("""
+            SELECT a.category_l1, a.category_l3
+            FROM products a JOIN products m
+              ON a.category_l1 = m.category_l1 AND a.category_l3 = m.category_l3
+            WHERE a.platform='amazon_br' AND m.platform='ml'
+              AND a.category_l1 = %s
+              AND a.embedding IS NOT NULL AND m.embedding IS NOT NULL
+              AND a.is_active=true AND m.is_active=true
+            GROUP BY a.category_l1, a.category_l3
+            ORDER BY a.category_l1, a.category_l3
+        """, (args.category,))
+    else:
+        l3_cats = query("""
+            SELECT a.category_l1, a.category_l3
+            FROM products a JOIN products m
+              ON a.category_l1 = m.category_l1 AND a.category_l3 = m.category_l3
+            WHERE a.platform='amazon_br' AND m.platform='ml'
+              AND a.embedding IS NOT NULL AND m.embedding IS NOT NULL
+              AND a.is_active=true AND m.is_active=true
+            GROUP BY a.category_l1, a.category_l3
+            ORDER BY a.category_l1, a.category_l3
+        """)
 
     for cat in l3_cats:
         cl1 = cat['category_l1']
