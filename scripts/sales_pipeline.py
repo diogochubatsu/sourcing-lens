@@ -6,11 +6,24 @@ Usage:
     python3 scripts/sales_pipeline.py --platform amazon   # Amazon only
     python3 scripts/sales_pipeline.py --category microfone  # Single category
 """
-import sys, re, time, json
+import sys, re, time, json, os
 sys.path.insert(0, '.')
 from scripts.db import query, execute
 
-DECODO_AUTH = 'VTAwMDA0MjE0NDM6UFdfMWI1NGIwZDY1ZGUzZGEyY2MyMmFiNGU1OTU4OTQ0Nzgz'
+# Load env for Decodo credentials
+_env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', '.env')
+if os.path.exists(_env_path):
+    with open(_env_path) as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                k, v = line.split('=', 1)
+                if k.strip() not in os.environ:
+                    os.environ[k.strip()] = v.strip()
+
+_decodo_user = os.environ.get('DECODO_USER', '')
+_decodo_pass = os.environ.get('DECODO_PASS', '')
+DECODO_AUTH = f'{_decodo_user}:{_decodo_pass}'
 DECODO_HEADERS = {'Authorization': f'Basic {DECODO_AUTH}', 'Content-Type': 'application/json'}
 
 def extract_sales(text):
@@ -80,10 +93,16 @@ if __name__ == '__main__':
     
     # ML categories with best sellers pages
     ml_cats = [
-        ('microfone', 'MLB270243'),
-        ('headphone', 'MLB196208'),
-        ('led_panel', 'MLB430378'),
-        ('sports', 'MLB1276'),
+        ('Audio', 'MLB3835'),
+        ('Ferramentas', 'MLB263532'),
+        ('Esportes', 'MLB1276'),
+        ('Acessórios Mobile', 'MLB3813'),
+        ('Wearables', 'MLB417704'),
+        ('Casa', 'MLB1574'),
+        ('Praia', 'MLB1132'),
+        ('Fotografia', 'MLB1039'),
+        ('Iluminação', 'MLB430378'),
+        ('Moda', 'MLB1430'),
     ]
     
     total = 0

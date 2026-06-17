@@ -22,10 +22,12 @@ CRITERIA = {
 
 def audit(category=None):
     where = "WHERE is_active=true"
+    params = []
     if category:
-        where += f" AND category_l1='{category}'"
+        where += " AND category_l1=%s"
+        params.append(category)
 
-    total = query(f"SELECT COUNT(*) as c FROM products {where}")[0]['c']
+    total = query(f"SELECT COUNT(*) as c FROM products {where}", tuple(params))[0]['c']
     if total == 0:
         print(f'No active products found')
         return
@@ -36,7 +38,7 @@ def audit(category=None):
 
     passes = {}
     for name, criterion in CRITERIA.items():
-        passed = query(f"SELECT COUNT(*) as c FROM products {where} AND ({criterion})")[0]['c']
+        passed = query(f"SELECT COUNT(*) as c FROM products {where} AND ({criterion})", tuple(params))[0]['c']
         failed = total - passed
         pct = passed / total * 100
         passes[name] = passed

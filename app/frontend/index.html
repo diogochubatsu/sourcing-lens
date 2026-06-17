@@ -483,25 +483,45 @@
         <div class="header">
             <h1>arbt.ly</h1>
             <div class="subtitle">Market Intelligence Dashboard</div>
-            <div class="meta">v0.1 — Core categories with verified data across Amazon BR, Amazon US & Mercado Livre</div>
+            <div class="meta">Cross-platform product matching across Amazon BR, Amazon US & Mercado Livre</div>
+        </div>
+
+        <!-- Search Bar -->
+        <div style="max-width:600px;margin:0 auto 24px;">
+            <div style="display:flex;gap:8px;">
+                <input type="text" id="search-input" placeholder="Search products by title..." 
+                    style="flex:1;padding:12px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;"
+                    onkeypress="if(event.key==='Enter') doSearch()">
+                <button onclick="doSearch()" style="padding:12px 24px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Search</button>
+            </div>
+            <div id="search-results" style="display:none;margin-top:12px;background:#fff;border-radius:12px;border:1px solid #eee;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);"></div>
+        </div>
+
+        <!-- Category Browser -->
+        <div style="margin-bottom:24px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <span style="font-size:13px;color:#666;font-weight:600;">Browse by Category:</span>
+                <select id="category-select" onchange="filterByCategory(this.value)" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
         </div>
         
         <div style="text-align:right; margin-bottom:16px;"><button onclick="showLoginForm()" style="background:#1a1a1a; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:13px;">👤 Login / Register</button></div>
         <div class="tabs">
-            <button class="tab active" onclick="filterCategory('microfone', this)">🎤 Wireless Mics</button>
-            <button class="tab" onclick="filterCategory('headphone', this)">🎧 Headphones</button>
-            <button class="tab" onclick="filterCategory('led_panel', this)">💡 LED Panels</button>
-            <button class="tab" onclick="filterCategory('tripod', this)">📐 Tripods</button>
+            <button class="tab active" onclick="filterCategory('Audio', this)">🎤 Audio</button>
+            <button class="tab" onclick="filterCategory('Casa', this)">🏠 Casa</button>
+            <button class="tab" onclick="filterCategory('Ferramentas', this)">🔧 Ferramentas</button>
+            <button class="tab" onclick="filterCategory('Esportes', this)">⚽ Esportes</button>
             <div class="tab dropdown-parent" style="position:relative;">
                 <button class="tab" style="border:1px solid #ddd;" onclick="toggleMoreDropdown(event)">📦 More ▾</button>
                 <div id="more-dropdown" style="display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ddd;border-radius:12px;padding:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:100;min-width:200px;margin-top:4px;">
-                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('ring_light', this);closeMoreDropdown()">💡 Ring Lights</button>
-                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('phone_holder', this);closeMoreDropdown()">📱 Phone Holders</button>
-                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('beach_towel_clip', this);closeMoreDropdown()">🏖️ Towel Clips</button>
-                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('home_organization', this);closeMoreDropdown()">🏠 Home Org</button>
-                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('sports', this);closeMoreDropdown()">⚽ Sports</button>
-                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('bluetooth_speaker', this);closeMoreDropdown()">🔊 Bluetooth Speakers</button>
-                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('smartwatch', this);closeMoreDropdown()">⌚ Smartwatches</button>
+                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('Iluminação', this);closeMoreDropdown()">💡 Iluminação</button>
+                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('Fotografia', this);closeMoreDropdown()">📷 Fotografia</button>
+                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('Praia', this);closeMoreDropdown()">🏖️ Praia</button>
+                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('Wearables', this);closeMoreDropdown()">⌚ Wearables</button>
+                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('Acessórios Mobile', this);closeMoreDropdown()">📱 Acessórios Mobile</button>
+                    <button class="tab" style="display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 12px;margin:2px 0;" onclick="filterCategory('Moda', this);closeMoreDropdown()">👗 Moda</button>
                 </div>
             </div>
         </div>
@@ -556,6 +576,25 @@
                 <tbody id="amazon-table"></tbody>
             </table>
         </div>
+
+        <!-- AMAZON US -->
+        <div class="section">
+            <h2>Amazon US — Products</h2>
+            <div class="note">Products from Amazon US for cross-border comparison.</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Sales/mo</th>
+                        <th>Reviews</th>
+                        <th>Rating</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody id="amazon-us-table"></tbody>
+            </table>
+        </div>
         
         <!-- MERCADO LIVRE -->
         <div class="section">
@@ -579,6 +618,23 @@
 
     </div>
     
+    <!-- Chart Modal -->
+    <div class="chart-overlay" id="chart-overlay">
+        <div class="chart-modal">
+            <button class="close-btn" onclick="closeChart()">&times;</button>
+            <h3 id="chart-title">Price History</h3>
+            <div class="chart-subtitle" id="chart-subtitle"></div>
+            <div class="chart-wrapper">
+                <canvas id="price-chart"></canvas>
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item"><span class="legend-dot" style="background:#22c55e;"></span> Amazon BR</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#2563eb;"></span> Mercado Livre</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span> Amazon US</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         var currentSort = 'confidence';
         var amazonSortKey = null;
@@ -586,17 +642,100 @@
         var mlSortKey = null;
         var mlSortAsc = false;
 
+        // Search functionality
+        async function doSearch() {
+            var query = document.getElementById('search-input').value.trim();
+            if (!query) {
+                document.getElementById('search-results').style.display = 'none';
+                return;
+            }
+            
+            try {
+                var resp = await fetch('/api/products?limit=20');
+                var data = await resp.json();
+                var products = data.products || [];
+                
+                // Filter by search query
+                var results = products.filter(function(p) {
+                    return (p.title && p.title.toLowerCase().includes(query.toLowerCase())) ||
+                           (p.platform_id && p.platform_id.toLowerCase().includes(query.toLowerCase()));
+                });
+                
+                var container = document.getElementById('search-results');
+                if (results.length === 0) {
+                    container.innerHTML = '<div style="color:#999;text-align:center;">No products found for "' + query + '"</div>';
+                } else {
+                    container.innerHTML = '<div style="font-size:12px;color:#666;margin-bottom:8px;">Found ' + results.length + ' products</div>' +
+                        results.slice(0, 10).map(function(p) {
+                            var price = p.price ? (p.currency === 'USD' ? '$' : 'R$') + ' ' + parseFloat(p.price).toFixed(2) : '-';
+                            var sales = p.sales_30d || 0;
+                            return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0;">' +
+                                '<div><strong>' + (p.title || '').substring(0, 60) + '</strong>' +
+                                '<div style="font-size:11px;color:#999;">' + p.platform + ' · ' + p.platform_id + '</div></div>' +
+                                '<div style="text-align:right;"><div style="font-weight:600;">' + price + '</div>' +
+                                '<div style="font-size:11px;color:#999;">' + sales + ' sales</div></div></div>';
+                        }).join('');
+                }
+                container.style.display = 'block';
+            } catch(e) {
+                console.error('Search error:', e);
+            }
+        }
+
+        // Category browser
+        async function loadCategories() {
+            try {
+                var resp = await fetch('/api/categories');
+                var data = await resp.json();
+                var categories = data.categories || [];
+                
+                var select = document.getElementById('category-select');
+                categories.forEach(function(c) {
+                    if (c.category_l1) {
+                        var option = document.createElement('option');
+                        option.value = c.category_l1;
+                        option.textContent = c.category_l1 + ' (' + c.product_count + ')';
+                        select.appendChild(option);
+                    }
+                });
+            } catch(e) {
+                console.error('Error loading categories:', e);
+            }
+        }
+
+        function filterByCategory(category) {
+            window.currentCategory = category || 'Audio';
+            renderCurrentCategory();
+        }
+
+        // Initialize categories on load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+        });
+
         async function loadData() {
-            const r = await fetch('/api/products?limit=200');
-            const data = await r.json();
-            window.allProducts = data.products;
+            try {
+                var r = await fetch('/api/products?limit=500');
+                if (!r.ok) throw new Error('Failed to load products');
+                var data = await r.json();
+                window.allProducts = data.products || [];
+            } catch(e) {
+                console.error('Error loading products:', e);
+                window.allProducts = [];
+            }
         }
         
         async function loadMatches(sortBy) {
-            sortBy = sortBy || currentSort;
-            const r = await fetch('/api/matches?limit=100&sort_by=' + sortBy);
-            const data = await r.json();
-            window.allMatches = data.matches || [];
+            try {
+                sortBy = sortBy || currentSort;
+                var r = await fetch('/api/matches?limit=200&sort_by=' + sortBy);
+                if (!r.ok) throw new Error('Failed to load matches');
+                var data = await r.json();
+                window.allMatches = data.matches || [];
+            } catch(e) {
+                console.error('Error loading matches:', e);
+                window.allMatches = [];
+            }
         }
         
         function setSort(sortBy, el) {
@@ -623,36 +762,47 @@
             var products = window.allProducts || [];
             var matches = window.allMatches || [];
             
-            var filtered = products.filter(function(p) { return p.category === category; });
+            var filtered = products.filter(function(p) { return p.category_l1 === category; });
             
             var amazon = filtered.filter(function(p) { return p.platform === 'amazon_br'; }).sort(function(a, b) { return (b.sales_30d || 0) - (a.sales_30d || 0); });
+            var amazon_us = filtered.filter(function(p) { return p.platform === 'amazon_us'; }).sort(function(a, b) { return (b.sales_30d || 0) - (a.sales_30d || 0); });
             var ml = filtered.filter(function(p) { return p.platform === 'ml' && p.image_urls && p.image_urls.length > 0; }).sort(function(a, b) { return (b.sales_30d || 0) - (a.sales_30d || 0); });
             
             // Stats — 4 core categories overview
-            var coreCategories = ['microfone', 'headphone', 'led_panel', 'tripod'];
-            var coreLabels = ['🎤 Mics', '🎧 Headphones', '💡 LED Panels', '📐 Tripods'];
+            var coreCategories = ['Audio', 'Casa', 'Ferramentas', 'Esportes'];
+            var coreLabels = ['🎤 Audio', '🏠 Casa', '🔧 Ferramentas', '⚽ Esportes'];
             var coreStatsHtml = '';
             for (var ci = 0; ci < coreCategories.length; ci++) {
                 var cat = coreCategories[ci];
-                var catProds = window.allProducts ? window.allProducts.filter(function(p) { return p.category === cat; }) : [];
+                var catProds = window.allProducts ? window.allProducts.filter(function(p) { return p.category_l1 === cat; }) : [];
                 var catTotal = catProds.length;
                 coreStatsHtml += '<div class="stat"><div class="num" style="color:#1a1a1a">' + catTotal + '</div><div class="label">' + coreLabels[ci] + '</div></div>';
             }
             document.getElementById('stats-bar').innerHTML = coreStatsHtml;
 
             // Amazon table
-            renderAmazonTable(amazon);
+            renderAmazonTable(amazon, 'Amazon BR');
+            
+            // Amazon US table
+            renderAmazonTable(amazon_us, 'Amazon US');
             
             // ML table
             renderMLTable(ml);
             
             // Matches
-            var catMatches = matches.filter(function(m) { return m.category === category; });
+            var catMatches = matches.filter(function(m) { return m.category_l1 === category; });
             renderMatches(catMatches, matches.length, products);
         }
         
-        function renderAmazonTable(products) {
-            document.getElementById('amazon-table').innerHTML = products.map(function(p) {
+        function renderAmazonTable(products, platformName) {
+            var containerId = platformName === 'Amazon US' ? 'amazon-us-table' : 'amazon-table';
+            var container = document.getElementById(containerId);
+            if (!container) return;
+            if (products.length === 0) {
+                container.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#888;">No ' + platformName + ' products in this category</td></tr>';
+                return;
+            }
+            container.innerHTML = products.map(function(p) {
                 var sales = p.sales_30d || 0;
                 var salesClass = sales >= 500 ? 'hot' : sales >= 400 ? 'warm' : 'cold';
                 var rating = p.review_avg ? parseFloat(p.review_avg).toFixed(1) : '—';
@@ -881,13 +1031,13 @@
             }
         }
         
-        async function showPriceHistory(matchId) {
+        async function showPriceHistory(platformId) {
             try {
-                var resp = await fetch('/api/match-history/' + matchId);
+                var resp = await fetch('/api/price-history?platform_id=' + encodeURIComponent(platformId));
                 var data = await resp.json();
                 var history = data.history || [];
                 if (history.length === 0) {
-                    alert('No price history data available for this match yet. Data is collected daily at 9:00 AM.');
+                    alert('No price history data available for this product yet. Data is collected daily at 9:00 AM.');
                     return;
                 }
                 
@@ -906,7 +1056,7 @@
                     return p === 'amazon_br' ? 'Amazon BR' : p === 'ml' ? 'Mercado Livre' : 'Amazon US';
                 });
                 
-                document.getElementById('chart-title').textContent = 'Price History — Match #' + matchId;
+                document.getElementById('chart-title').textContent = 'Price History — ' + platformId;
                 document.getElementById('chart-subtitle').textContent = platforms.map(function(p, i) {
                     var items = groups[p];
                     return '<span style="color:' + (colors[p] || '#666') + ';font-weight:700;">' + labels[i] + '</span>: ' + items.length + ' records';
@@ -994,8 +1144,11 @@
         });
         
         async function init() {
+            // Show loading state
+            document.getElementById('matches-container').innerHTML = '<div style="text-align:center;padding:40px;background:#fff;border-radius:12px;border:1px solid #eee;color:#999;font-size:14px;">Loading data...</div>';
+            
             await Promise.all([loadData(), loadMatches()]);
-            window.currentCategory = 'microfone';  // v0.1 default core category
+            window.currentCategory = 'Audio';  // default category
             renderCurrentCategory();
         }
         
