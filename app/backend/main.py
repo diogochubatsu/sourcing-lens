@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """ArbitLens BR — FastAPI backend."""
-import os, json
+import os, sys, json
+
+# Ensure app/backend/ is in sys.path for relative imports in routers/services
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from datetime import datetime, timedelta
 from decimal import Decimal
 from fastapi import FastAPI, Query
@@ -9,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from scripts.db import query, execute, execute_returning
 
-app = FastAPI(title="ArbitLens BR", version="0.1.0")
+app = FastAPI(title="ArbitLens BR", version="0.2.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,6 +21,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from routers.product import router as product_router
+from routers.search import router as search_router
+app.include_router(product_router, prefix="/api", tags=["product"])
+app.include_router(search_router, prefix="/api", tags=["search"])
 
 # ── API ──────────────────────────────────────────────────────
 

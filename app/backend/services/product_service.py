@@ -24,7 +24,7 @@ def get_product_detail(product_id: int) -> Optional[ProductResponse]:
                    price, currency, url, image_urls, supplier_name, moq,
                    sales_total, sales_30d, review_count, review_avg,
                    category, bsr_rank, is_active, first_seen, last_updated
-            FROM arbitlens_products
+            FROM products
             WHERE id = %s
         """, (product_id,))
         
@@ -38,8 +38,8 @@ def get_product_detail(product_id: int) -> Optional[ProductResponse]:
         cur.execute("""
             SELECT p.id, p.platform, p.platform_id, p.title, p.price, p.currency,
                    p.url, p.sales_total, p.review_avg, p.is_active
-            FROM arbitlens_products p
-            JOIN arbitlens_matches m ON (
+            FROM products p
+            JOIN matches m ON (
                 (m.product_a_id = %s AND m.product_b_id = p.id)
                 OR (m.product_b_id = %s AND m.product_a_id = p.id)
             )
@@ -76,8 +76,8 @@ def get_product_detail(product_id: int) -> Optional[ProductResponse]:
             SELECT p.id, p.platform, p.platform_id, p.title, p.title_translated,
                    p.price, p.currency, p.url, p.image_urls, p.supplier_name, p.moq,
                    m.confidence, m.match_method
-            FROM arbitlens_products p
-            JOIN arbitlens_matches m ON (
+            FROM products p
+            JOIN matches m ON (
                 (m.product_a_id = %s AND m.product_b_id = p.id)
                 OR (m.product_b_id = %s AND m.product_a_id = p.id)
             )

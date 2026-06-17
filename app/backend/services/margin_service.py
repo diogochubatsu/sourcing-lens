@@ -1,7 +1,7 @@
 """
 Margin Calculator Service
 Computes landed cost and margin for selling a product on target platforms.
-Uses import factors from the arbitlens_import_factors table.
+Uses import factors from the import_factors table.
 """
 from typing import Optional
 from models import MarginEntry
@@ -37,7 +37,7 @@ def load_import_factors() -> dict:
     factors = {}
     try:
         with get_cursor() as cur:
-            cur.execute("SELECT country, quantity_min, factor FROM arbitlens_import_factors ORDER BY country, quantity_min")
+            cur.execute("SELECT country, quantity_min, factor FROM import_factors ORDER BY country, quantity_min")
             for row in cur.fetchall():
                 country = row["country"]
                 if country not in factors:

@@ -41,7 +41,7 @@ def search_by_text(query: str, limit: int = 20) -> list[SearchProduct]:
             SELECT id, platform, platform_id, title, title_translated,
                    price, currency, url, image_urls, supplier_name,
                    sales_total, review_avg
-            FROM arbitlens_products
+            FROM products
             WHERE is_active = TRUE
               AND (title ILIKE %s OR title_translated ILIKE %s)
             ORDER BY sales_total DESC NULLS LAST
@@ -67,7 +67,7 @@ def search_by_url(url: str) -> list[SearchProduct]:
             SELECT id, platform, platform_id, title, title_translated,
                    price, currency, url, image_urls, supplier_name,
                    sales_total, review_avg
-            FROM arbitlens_products
+            FROM products
             WHERE platform = %s AND platform_id = %s
         """, (platform, platform_id))
         
@@ -80,8 +80,8 @@ def search_by_url(url: str) -> list[SearchProduct]:
             SELECT p.id, p.platform, p.platform_id, p.title, p.title_translated,
                    p.price, p.currency, p.url, p.image_urls, p.supplier_name,
                    p.sales_total, p.review_avg
-            FROM arbitlens_products p
-            JOIN arbitlens_matches m ON (
+            FROM products p
+            JOIN matches m ON (
                 (m.product_a_id = %s AND m.product_b_id = p.id)
                 OR (m.product_b_id = %s AND m.product_a_id = p.id)
             )
@@ -104,10 +104,10 @@ def search_by_image(image_base64: str, limit: int = 20) -> list[SearchProduct]:
     Requires SigLIP2 embeddings to be computed (future feature).
     For now, returns empty — will be wired when embeddings pipeline is ready.
     """
-    # TODO: When SigLIP2 embeddings are in the DB:
+    # TODO: When CLIP embeddings are in the DB:
     # 1. Decode image_base64
-    # 2. Compute SigLIP2 embedding
-    # 3. SELECT ... ORDER BY image_embedding <=> %s LIMIT %s
+    # 2. Compute CLIP embedding
+    # 3. SELECT ... ORDER BY embedding <=> %s LIMIT %s
     return []
 
 

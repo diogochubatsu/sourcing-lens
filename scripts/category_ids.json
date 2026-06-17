@@ -1,130 +1,113 @@
 {
   "amazon_br": {
     "microphones": {
-      "id": "2407760011",
       "name_pt": "Microfones Externos para Gravador de Voz",
       "path": "Eletrônicos > Microfones",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/17095831011"
     },
     "headphones": {
-      "id": "2407760011",
       "name_pt": "Fones de Ouvido e Acessórios",
       "path": "Eletrônicos > Fones de Ouvido e Acessórios",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/24035344011"
     },
     "ring_lights": {
-      "id": "2407760011",
       "name_pt": "Iluminação para Câmeras e Foto",
       "path": "Eletrônicos > Câmeras e Foto > Estúdio e Iluminação > Iluminação",
-      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16244212011",
-      "note": "Shared with led_panels"
+      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16244212011"
     },
     "tripods": {
-      "id": "2407760011",
       "name_pt": "Tripés e Monopés",
       "path": "Eletrônicos > Câmeras e Foto > Tripés e Monopés",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16243841011"
     },
     "led_panels": {
-      "id": "2407760011",
       "name_pt": "Iluminação para Câmeras e Foto",
       "path": "Eletrônicos > Câmeras e Foto > Iluminação",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16244212011"
     },
     "home_organization": {
-      "id": "2407760011",
       "name_pt": "Organização e Armazenamento para Casa",
       "path": "Casa > Organização",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/home/17100533011"
     },
     "sports": {
-      "id": "2407760011",
       "name_pt": "Esportes e Aventura",
       "path": "Esportes > Geral",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/sports/16243800011"
     },
     "bluetooth_speaker": {
-      "id": "2407760011",
       "name_pt": "Caixas de Som Portáteis Bluetooth",
       "path": "Eletrônicos > Celulares > Acessórios > Caixas de Som Portáteis",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16244069011"
     },
     "smartwatch": {
-      "id": "2407760011",
       "name_pt": "Relógios Inteligentes",
       "path": "Eletrônicos > Wearables > Smartwatches",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16243897011"
     },
     "automotive_tool": {
-      "id": "hi",
       "name_pt": "Ferramentas Automotivas e Manuais",
       "path": "Ferramentas > Automotivas",
-      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/hi"
+      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/automotive/16243749011"
+    },
+    "phone_holder": {
+      "name_pt": "Suportes e Mounts para Celular",
+      "path": "Eletrônicos > Celulares > Acessórios > Suportes",
+      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16243915011"
     }
   },
   "amazon_us": {
     "home_organization": {
-      "id": "2407760011",
       "name_en": "Home Storage & Organization",
       "path": "Home & Kitchen > Storage & Organization",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Home-Kitchen-Organization/zgbs/home-garden/1063242"
     },
     "sports": {
-      "id": "2407760011",
       "name_en": "Sports & Outdoors",
       "path": "Sports & Outdoors",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Sports-Outdoors/zgbs/sporting-goods/3375251"
     },
     "microphones": {
-      "id": "2407760011",
       "name_en": "Microphones",
       "path": "Musical Instruments > Recording > Microphones",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Microphones/zgbs/musical-instruments/8882492011"
     },
     "headphones": {
-      "id": "2407760011",
       "name_en": "Headphones",
       "path": "Electronics > Headphones",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Headphones/zgbs/electronics/172541"
     },
     "ring_lights": {
-      "id": "2407760011",
       "name_en": "Continuous Output Lighting",
       "path": "Electronics > Camera & Photo > Lighting > Continuous",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Continuous-Output-Lighting/zgbs/electronics/3347881"
     },
     "tripods": {
-      "id": "2407760011",
       "name_en": "Tripods & Monopods",
       "path": "Electronics > Camera & Photo > Tripods & Monopods",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Tripods-Monopods/zgbs/electronics/499306"
     },
     "led_panels": {
-      "id": "2407760011",
       "name_en": "Continuous Output Lighting",
       "path": "Electronics > Camera & Photo > Lighting > Continuous",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Continuous-Output-Lighting/zgbs/electronics/3347881"
     },
     "phone_holder": {
-      "id": "2407760011",
-      "name_en": "Cell Phones & Accessories",
+      "name_en": "Cell Phone Accessories",
       "path": "Cell Phones > Accessories",
-      "bestsellers_url": "https://www.amazon.com/Best-Sellers-Cell-Phones-Accessories/zgbs/wireless/2335752011"
+      "bestsellers_url": "https://www.amazon.com/Best-Sellers-Cell-Phone-Accessories/zgbs/wireless/2335752011"
     },
     "bluetooth_speaker": {
-      "id": "2407760011",
       "name_en": "Portable Bluetooth Speakers",
       "path": "Electronics > Portable Audio > Speakers & Docks",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Portable-Speakers-Docks/zgbs/electronics/689637011"
     },
     "smartwatch": {
-      "id": "2407760011",
       "name_en": "Smartwatches",
       "path": "Electronics > Wearable Technology > Smartwatches",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Smartwatches/zgbs/electronics/7939901011"
     },
     "automotive_tool": {
-      "id": "15708761",
       "name_en": "Automotive Tools & Equipment",
       "path": "Automotive > Tools & Equipment",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Automotive-Tools-Equipment/zgbs/automotive/15708761"
@@ -132,8 +115,8 @@
   },
   "metadata": {
     "discovered_at": "2026-06-12",
-    "total_categories": 22,
-    "unique_categories": 12,
-    "note": "Added automotive_tool for amazon_br and amazon_us."
+    "total_categories": 24,
+    "unique_categories": 11,
+    "note": "Cleaned up invalid IDs, added phone_holder for amazon_br."
   }
 }

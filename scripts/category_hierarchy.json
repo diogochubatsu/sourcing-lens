@@ -1,0 +1,68 @@
+{
+  "microphones": {
+    "l1": "Audio",
+    "l2": "Microphones",
+    "l3": "External Microphones",
+    "ml_category": "microfone"
+  },
+  "headphones": {
+    "l1": "Audio",
+    "l2": "Headphones",
+    "l3": "Headphones & Accessories",
+    "ml_category": "headphone"
+  },
+  "ring_lights": {
+    "l1": "Lighting",
+    "l2": "Ring Lights",
+    "l3": "Ring Lights",
+    "ml_category": null
+  },
+  "tripods": {
+    "l1": "Photography",
+    "l2": "Tripods",
+    "l3": "Tripods & Monopods",
+    "ml_category": null
+  },
+  "led_panels": {
+    "l1": "Lighting",
+    "l2": "LED Panels",
+    "l3": "LED Video Lights",
+    "ml_category": "led_panel"
+  },
+  "home_organization": {
+    "l1": "Home",
+    "l2": "Organization",
+    "l3": "Storage & Organization",
+    "ml_category": null
+  },
+  "sports": {
+    "l1": "Sports",
+    "l2": "Sports & Outdoors",
+    "l3": "General Sports",
+    "ml_category": "sports"
+  },
+  "bluetooth_speaker": {
+    "l1": "Audio",
+    "l2": "Speakers",
+    "l3": "Portable Bluetooth Speakers",
+    "ml_category": null
+  },
+  "smartwatch": {
+    "l1": "Wearables",
+    "l2": "Smartwatches",
+    "l3": "Smartwatches",
+    "ml_category": null
+  },
+  "automotive_tool": {
+    "l1": "Tools",
+    "l2": "Automotive Tools",
+    "l3": "Automotive Tools & Equipment",
+    "ml_category": null
+  },
+  "phone_holder": {
+    "l1": "Accessories",
+    "l2": "Phone Accessories",
+    "l3": "Phone Holders & Mounts",
+    "ml_category": null
+  }
+}
