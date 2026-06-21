@@ -1,7 +1,3 @@
-"""
-Product Service
-Assembles the full product detail: product info, prices, matches, margins, pulse, verdict.
-"""
 from typing import Optional
 from models import (
     ProductDetail, ProductResponse, PriceEntry, MatchResult,
@@ -20,10 +16,10 @@ def get_product_detail(product_id: int) -> Optional[ProductResponse]:
     with get_cursor() as cur:
         # 1. Get the product
         cur.execute("""
-            SELECT id, platform, platform_id, title, title_translated,
-                   price, currency, url, image_urls, supplier_name, moq,
-                   sales_total, sales_30d, review_count, review_avg,
-                   category, bsr_rank, is_active, first_seen, last_updated
+            SELECT id, platform, platform_id, title,
+                   price, currency, url, image_urls,
+                   sales_30d, review_count, review_avg,
+                   category_l1, category_l2, category_l3, bsr_rank, is_active, last_updated
             FROM products
             WHERE id = %s
         """, (product_id,))
@@ -37,7 +33,7 @@ def get_product_detail(product_id: int) -> Optional[ProductResponse]:
         # 2. Get cross-platform prices (from matches)
         cur.execute("""
             SELECT p.id, p.platform, p.platform_id, p.title, p.price, p.currency,
-                   p.url, p.sales_total, p.review_avg, p.is_active
+                   p.url, p.sales_30d, p.review_avg, p.is_active
             FROM products p
             JOIN matches m ON (
                 (m.product_a_id = %s AND m.product_b_id = p.id)
@@ -54,7 +50,7 @@ def get_product_detail(product_id: int) -> Optional[ProductResponse]:
             price=float(r["price"]) if r.get("price") else 0.0,
             currency=r.get("currency") or "USD",
             url=r.get("url"),
-            sales_total=r.get("sales_total"),
+            sales_total=r.get("sales_30d"),
             review_avg=float(r["review_avg"]) if r.get("review_avg") else None,
             is_active=r.get("is_active", True),
         ) for r in price_rows]
@@ -66,15 +62,15 @@ def get_product_detail(product_id: int) -> Optional[ProductResponse]:
             price=product.price,
             currency=product.currency,
             url=product.url,
-            sales_total=product.sales_total,
+            sales_total=getattr(product, "sales_total", None) or 0,
             review_avg=product.review_avg,
             is_active=product.is_active,
         ))
         
         # 3. Get full match details (confidence-ranked)
         cur.execute("""
-            SELECT p.id, p.platform, p.platform_id, p.title, p.title_translated,
-                   p.price, p.currency, p.url, p.image_urls, p.supplier_name, p.moq,
+            SELECT p.id, p.platform, p.platform_id, p.title,
+                   p.price, p.currency, p.url, p.image_urls,
                    m.confidence, m.match_method
             FROM products p
             JOIN matches m ON (
@@ -92,15 +88,15 @@ def get_product_detail(product_id: int) -> Optional[ProductResponse]:
             platform=r["platform"],
             platform_id=r["platform_id"],
             title=r["title"],
-            title_translated=r.get("title_translated"),
+            title_translated=None,
             price=float(r["price"]) if r.get("price") else 0.0,
             currency=r.get("currency") or "USD",
             url=r.get("url"),
             image_urls=r.get("image_urls"),
             confidence=float(r["confidence"]),
             match_method=r.get("match_method") or "unknown",
-            supplier_name=r.get("supplier_name"),
-            moq=r.get("moq"),
+            supplier_name=None,
+            moq=None,
         ) for r in match_rows]
     
     # 4. Compute margins (only if product has a price)
@@ -152,8 +148,8 @@ def _compute_pulse(
     velocity = "warm"
     velocity_detail = "Steady demand"
     
-    if product.sales_30d and product.sales_total:
-        ratio = product.sales_30d / max(product.sales_total, 1)
+    if product.sales_30d and getattr(product, "sales_total", None) or 0:
+        ratio = product.sales_30d / max(getattr(product, "sales_total", None) or 0, 1)
         if ratio > 0.3:
             velocity = "hot"
             velocity_detail = f"{product.sales_30d} sales in last 30 days — trending up"

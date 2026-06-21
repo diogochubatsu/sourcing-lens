@@ -434,6 +434,18 @@
         }
         .sort-btn:hover { border-color: #999; }
         .sort-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+        .filter-select {
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 500;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            color: #1a1a1a;
+            cursor: pointer;
+        }
+        .filter-select:hover { border-color: #999; }
+        .filter-select:focus { outline: none; border-color: #1a1a1a; }
 
         /* Match summary stats */
         .match-summary {
@@ -553,6 +565,22 @@
                 <button class="sort-btn active" onclick="setSort('confidence', this)">Confidence</button>
                 <button class="sort-btn" onclick="setSort('margin', this)">Margin (highest)</button>
                 <button class="sort-btn" onclick="setSort('-margin', this)">Margin (lowest)</button>
+                <span class="sort-label" style="margin-left:24px;">Filter:</span>
+                <select class="filter-select" id="filter-confidence" onchange="applyQualityFilters()">
+                    <option value="0">Any confidence</option>
+                    <option value="0.7" selected>≥ 70% (default)</option>
+                    <option value="0.8">≥ 80% (Alta)</option>
+                    <option value="0.9">≥ 90% (Excelente)</option>
+                </select>
+                <select class="filter-select" id="filter-sales" onchange="applyQualityFilters()">
+                    <option value="0" selected>Any sales</option>
+                    <option value="100">≥ 100/mo</option>
+                    <option value="500">≥ 500/mo (hot)</option>
+                    <option value="1000">≥ 1000/mo (very hot)</option>
+                </select>
+                <select class="filter-select" id="filter-category" onchange="applyQualityFilters()">
+                    <option value="">All categories</option>
+                </select>
             </div>
 
             <div class="match-grid" id="matches-container"></div>
@@ -714,6 +742,8 @@
         });
 
         async function loadData() {
+            await populateCategoryFilter();
+
             try {
                 var r = await fetch('/api/products?limit=500');
                 if (!r.ok) throw new Error('Failed to load products');
@@ -757,6 +787,47 @@
             renderCurrentCategory();
         }
         
+        async function applyQualityFilters() {
+            var minConf = parseFloat(document.getElementById('filter-confidence').value) || 0;
+            var minSales = parseInt(document.getElementById('filter-sales').value) || 0;
+            var cat = document.getElementById('filter-category').value;
+            var params = 'limit=200&sort_by=' + currentSort + '&min_confidence=' + minConf + '&min_sales=' + minSales;
+            if (cat) params += '&category_l1=' + encodeURIComponent(cat);
+            try {
+                var r = await fetch('/api/matches?' + params);
+                if (!r.ok) throw new Error('Failed to load matches');
+                var data = await r.json();
+                window.allMatches = data.matches || [];
+                renderCurrentCategory();
+            } catch(e) {
+                console.error('Filter error:', e);
+            }
+        }
+
+        async function populateCategoryFilter() {
+            try {
+                var r = await fetch('/api/categories');
+                if (!r.ok) return;
+                var data = await r.json();
+                var cats = data.categories || [];
+                var seen = new Set();
+                var sel = document.getElementById('filter-category');
+                if (!sel) return;
+                cats.forEach(function(c) {
+                    var name = c.category_l1;
+                    if (name && !seen.has(name)) {
+                        seen.add(name);
+                        var opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        sel.appendChild(opt);
+                    }
+                });
+            } catch(e) {
+                console.error('Cat load error:', e);
+            }
+        }
+
         function renderCurrentCategory() {
             var category = window.currentCategory || 'microfone';
             var products = window.allProducts || [];

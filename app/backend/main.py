@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """ArbitLens BR — FastAPI backend."""
 import os
 import logging
@@ -10,6 +9,7 @@ from fastapi.responses import FileResponse
 
 from database import init_pool, close_pool
 from routers import matches_router, products_router, users_router, alerts_router
+from routers.product import router as product_router
 from routers.admin import router as admin_router
 
 # ── Logging ──────────────────────────────────────────────────
@@ -40,6 +40,7 @@ app.include_router(matches_router)
 app.include_router(products_router)
 app.include_router(users_router)
 app.include_router(alerts_router)
+app.include_router(product_router)
 app.include_router(admin_router)
 
 # ── Health ───────────────────────────────────────────────────

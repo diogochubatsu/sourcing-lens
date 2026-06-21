@@ -6,8 +6,14 @@ router = APIRouter(prefix="/api", tags=["matches"])
 
 
 @router.get("/matches")
-def list_matches(limit: int = Query(50, ge=1, le=500), sort_by: str = Query("confidence", pattern="^(confidence|margin|-margin)$")):
-    """List cross-platform matches with product details."""
+def list_matches(
+    limit: int = Query(50, ge=1, le=500),
+    sort_by: str = Query("confidence", pattern="^(confidence|margin|-margin)$"),
+    min_confidence: float = Query(0.0, ge=0.0, le=1.0),
+    category_l1: str = Query(None),
+    min_sales: int = Query(0, ge=0),
+):
+    """List cross-platform matches with product details and quality filters."""
     from database import query as db_query
 
     order_clause = "ORDER BY m.confidence DESC"
@@ -16,14 +22,31 @@ def list_matches(limit: int = Query(50, ge=1, le=500), sort_by: str = Query("con
     elif sort_by == "-margin":
         order_clause = "ORDER BY price_diff ASC"
 
+    where_clauses = [
+        "(p1.platform = 'amazon_br' AND p2.platform = 'ml')",
+        "m.confidence >= %s",
+    ]
+    params = [min_confidence]
+
+    if category_l1:
+        where_clauses.append("p1.category_l1 = %s")
+        params.append(category_l1)
+    if min_sales > 0:
+        where_clauses.append("(COALESCE(p1.sales_30d, 0) >= %s OR COALESCE(p2.sales_30d, 0) >= %s)")
+        params.extend([min_sales, min_sales])
+
+    where_sql = " AND ".join(where_clauses)
+    params.append(limit)
+
     rows = db_query(f"""
-        SELECT 
+        SELECT
             m.id, m.confidence, m.match_method,
-            p1.platform_id as amazon_platform_id, 
-            p1.title as amazon_title, p1.price as amazon_price, 
-            p1.sales_30d as amazon_sales, p1.url as amazon_url, 
+            p1.id as product_a_id, p2.id as product_b_id,
+            p1.platform_id as amazon_platform_id,
+            p1.title as amazon_title, p1.price as amazon_price,
+            p1.sales_30d as amazon_sales, p1.url as amazon_url,
             p1.platform as amazon_platform,
-            p1.category_l1,
+            p1.category_l1, p1.category_l2, p1.category_l3,
             p2.platform_id as ml_platform_id,
             p2.title as ml_title, p2.price as ml_price,
             p2.sales_30d as ml_sales, p2.url as ml_url,
@@ -35,11 +58,10 @@ def list_matches(limit: int = Query(50, ge=1, le=500), sort_by: str = Query("con
         FROM matches m
         JOIN products p1 ON m.product_a_id = p1.id
         JOIN products p2 ON m.product_b_id = p2.id
-        WHERE (p1.platform = 'amazon_br' AND p2.platform = 'ml')
-           OR (p1.platform = 'amazon_br' AND p2.platform = 'amazon_us')
+        WHERE {where_sql}
         {order_clause}
         LIMIT %s
-    """, (limit,))
+    """, tuple(params))
     
     results = []
     for r in rows:
