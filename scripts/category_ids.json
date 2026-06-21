@@ -2,32 +2,32 @@
   "amazon_br": {
     "microphones": {
       "name_pt": "Microfones Externos para Gravador de Voz",
-      "path": "Eletrônicos > Microfones",
+      "path": "Eletr\u00f4nicos > Microfones",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/17095831011"
     },
     "headphones": {
-      "name_pt": "Fones de Ouvido e Acessórios",
-      "path": "Eletrônicos > Fones de Ouvido e Acessórios",
+      "name_pt": "Fones de Ouvido e Acess\u00f3rios",
+      "path": "Eletr\u00f4nicos > Fones de Ouvido e Acess\u00f3rios",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/24035344011"
     },
     "ring_lights": {
-      "name_pt": "Iluminação para Câmeras e Foto",
-      "path": "Eletrônicos > Câmeras e Foto > Estúdio e Iluminação > Iluminação",
+      "name_pt": "Ilumina\u00e7\u00e3o para C\u00e2meras e Foto",
+      "path": "Eletr\u00f4nicos > C\u00e2meras e Foto > Est\u00fadio e Ilumina\u00e7\u00e3o > Ilumina\u00e7\u00e3o",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16244212011"
     },
     "tripods": {
-      "name_pt": "Tripés e Monopés",
-      "path": "Eletrônicos > Câmeras e Foto > Tripés e Monopés",
+      "name_pt": "Trip\u00e9s e Monop\u00e9s",
+      "path": "Eletr\u00f4nicos > C\u00e2meras e Foto > Trip\u00e9s e Monop\u00e9s",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16243841011"
     },
     "led_panels": {
-      "name_pt": "Iluminação para Câmeras e Foto",
-      "path": "Eletrônicos > Câmeras e Foto > Iluminação",
+      "name_pt": "Ilumina\u00e7\u00e3o para C\u00e2meras e Foto",
+      "path": "Eletr\u00f4nicos > C\u00e2meras e Foto > Ilumina\u00e7\u00e3o",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16244212011"
     },
     "home_organization": {
-      "name_pt": "Organização e Armazenamento para Casa",
-      "path": "Casa > Organização",
+      "name_pt": "Organiza\u00e7\u00e3o e Armazenamento para Casa",
+      "path": "Casa > Organiza\u00e7\u00e3o",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/home/17100533011"
     },
     "sports": {
@@ -36,13 +36,13 @@
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/sports/16243800011"
     },
     "bluetooth_speaker": {
-      "name_pt": "Caixas de Som Portáteis Bluetooth",
-      "path": "Eletrônicos > Celulares > Acessórios > Caixas de Som Portáteis",
+      "name_pt": "Caixas de Som Port\u00e1teis Bluetooth",
+      "path": "Eletr\u00f4nicos > Celulares > Acess\u00f3rios > Caixas de Som Port\u00e1teis",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16244069011"
     },
     "smartwatch": {
-      "name_pt": "Relógios Inteligentes",
-      "path": "Eletrônicos > Wearables > Smartwatches",
+      "name_pt": "Rel\u00f3gios Inteligentes",
+      "path": "Eletr\u00f4nicos > Wearables > Smartwatches",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16243897011"
     },
     "automotive_tool": {
@@ -52,8 +52,28 @@
     },
     "phone_holder": {
       "name_pt": "Suportes e Mounts para Celular",
-      "path": "Eletrônicos > Celulares > Acessórios > Suportes",
+      "path": "Eletr\u00f4nicos > Celulares > Acess\u00f3rios > Suportes",
       "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/electronics/16243915011"
+    },
+    "beauty": {
+      "name_pt": "Beleza e Cuidado Pessoal",
+      "path": "Beleza > Geral",
+      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/beauty"
+    },
+    "toys": {
+      "name_pt": "Brinquedos e Jogos",
+      "path": "Brinquedos > Geral",
+      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/toys"
+    },
+    "garden": {
+      "name_pt": "Jardim e Piscina",
+      "path": "Jardim > Geral",
+      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/garden"
+    },
+    "baby": {
+      "name_pt": "Beb\u00ea",
+      "path": "Beb\u00ea > Geral",
+      "bestsellers_url": "https://www.amazon.com.br/gp/bestsellers/baby"
     }
   },
   "amazon_us": {
@@ -111,12 +131,32 @@
       "name_en": "Automotive Tools & Equipment",
       "path": "Automotive > Tools & Equipment",
       "bestsellers_url": "https://www.amazon.com/Best-Sellers-Automotive-Tools-Equipment/zgbs/automotive/15708761"
+    },
+    "beauty": {
+      "name_en": "Beauty",
+      "path": "Beauty > General",
+      "bestsellers_url": "https://www.amazon.com/Best-Sellers-Beauty/zgbs/beauty"
+    },
+    "toys": {
+      "name_en": "Toys & Games",
+      "path": "Toys & Games > General",
+      "bestsellers_url": "https://www.amazon.com/Best-Sellers-Toys-Games/zgbs/toys-and-games"
+    },
+    "garden": {
+      "name_en": "Garden & Outdoor",
+      "path": "Garden & Outdoor > General",
+      "bestsellers_url": "https://www.amazon.com/Best-Sellers-Garden-Outdoor/zgbs/lawn-and-garden"
+    },
+    "baby": {
+      "name_en": "Baby Products",
+      "path": "Baby > General",
+      "bestsellers_url": "https://www.amazon.com/Best-Sellers-Baby/zgbs/baby-products"
     }
   },
   "metadata": {
     "discovered_at": "2026-06-12",
-    "total_categories": 24,
-    "unique_categories": 11,
+    "total_categories": 15,
+    "unique_categories": 15,
     "note": "Cleaned up invalid IDs, added phone_holder for amazon_br."
   }
 }

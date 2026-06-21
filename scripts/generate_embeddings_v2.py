@@ -65,9 +65,12 @@ def generate_siglip_embeddings(category=None, limit=None, model_name='google/sig
         """
         for attempt in range(retries):
             try:
-                # Local path
-                if img_url.startswith('/images/'):
-                    local_path = '/mnt/ssd/arbitlens/data' + img_url
+                # Local path - handle /images/... or relative paths like 'platform/file.jpg'
+                if img_url.startswith('/images/') or '/' in img_url and not img_url.startswith('http'):
+                    if img_url.startswith('/images/'):
+                        local_path = '/mnt/ssd/arbitlens/data' + img_url
+                    else:
+                        local_path = '/mnt/ssd/arbitlens/data/images/' + img_url
                     import os
                     if not os.path.exists(local_path):
                         continue

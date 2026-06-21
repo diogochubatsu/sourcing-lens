@@ -12,6 +12,7 @@ def list_matches(
     min_confidence: float = Query(0.0, ge=0.0, le=1.0),
     category_l1: str = Query(None),
     min_sales: int = Query(0, ge=0),
+    include_br_us: bool = Query(False),
 ):
     """List cross-platform matches with product details and quality filters."""
     from database import query as db_query
@@ -22,10 +23,18 @@ def list_matches(
     elif sort_by == "-margin":
         order_clause = "ORDER BY price_diff ASC"
 
-    where_clauses = [
-        "(p1.platform = 'amazon_br' AND p2.platform = 'ml')",
-        "m.confidence >= %s",
-    ]
+    if include_br_us:
+        # Include both BR↔ML and BR↔US matches
+        where_clauses = [
+            "(p1.platform = 'amazon_br' AND p2.platform IN ('ml', 'amazon_us'))",
+            "m.confidence >= %s",
+        ]
+    else:
+        # Default: only BR↔ML matches
+        where_clauses = [
+            "(p1.platform = 'amazon_br' AND p2.platform = 'ml')",
+            "m.confidence >= %s",
+        ]
     params = [min_confidence]
 
     if category_l1:

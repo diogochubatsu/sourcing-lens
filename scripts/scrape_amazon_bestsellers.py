@@ -535,94 +535,91 @@ def upsert_product(product: dict, dry_run: bool = False) -> bool:
                  f"Image hash: {image_hash[:12] if image_hash else 'None'}...")
         return True
 
-    conn = get_conn()
     try:
-        cur = conn.cursor()
+        with get_conn() as conn:
+            cur = conn.cursor()
 
-        # Check if product exists
-        cur.execute(
-            "SELECT id FROM products WHERE platform = %s AND platform_id = %s",
-            (product["platform"], product["platform_id"])
-        )
-        existing = cur.fetchone()
+            # Check if product exists
+            cur.execute(
+                "SELECT id FROM products WHERE platform = %s AND platform_id = %s",
+                (product["platform"], product["platform_id"])
+            )
+            existing = cur.fetchone()
 
-        if existing:
-            # Update existing product
-            cur.execute("""
-                UPDATE products SET
-                    title = COALESCE(%s, title),
-                    price = COALESCE(%s, price),
-                    currency = COALESCE(%s, currency),
-                    url = COALESCE(%s, url),
-                    image_urls = CASE WHEN %s IS NOT NULL THEN ARRAY[%s]::text[] ELSE image_urls END,
-                    image_hash = COALESCE(%s, image_hash),
-                    review_count = COALESCE(%s, review_count),
-                    review_avg = COALESCE(%s, review_avg),
-                    bsr_rank = COALESCE(%s, bsr_rank),
-                    sales_30d = COALESCE(%s, sales_30d),
-                    category = COALESCE(%s, category),
-                    last_updated = NOW()
-                WHERE platform = %s AND platform_id = %s
-            """, (
-                product.get("title"),
-                product.get("price"),
-                product.get("currency"),
-                product.get("url"),
-                local_image, local_image,      # image_urls (local path)
-                image_hash,
-                product.get("review_count"),
-                product.get("review_avg"),
-                product.get("bsr_rank"),
-                product.get("sales_30d"),
-                product.get("category"),
-                product["platform"],
-                product["platform_id"],
-            ))
-            log.info(f"Updated: {product['platform_id']} - {product['title'][:50]}...")
-        else:
-            # Insert new product
-            img_arr = [local_image] if local_image else None
-            cur.execute("""
-                INSERT INTO products (
-                    platform, platform_id, title, price, currency, url,
-                    image_urls, image_hash,
-                    review_count, review_avg, bsr_rank, sales_30d,
-                    category, supplier_name, raw_data
-                ) VALUES (
-                    %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s
-                )
-            """, (
-                product["platform"],
-                product["platform_id"],
-                product.get("title"),
-                product.get("price"),
-                product.get("currency", "BRL" if product["platform"] == "amazon_br" else "USD"),
-                product.get("url"),
-                img_arr,
-                image_hash,
-                product.get("review_count", 0),
-                product.get("review_avg"),
-                product.get("bsr_rank"),
-                product.get("sales_30d"),
-                product.get("category"),
-                "Amazon BR" if product["platform"] == "amazon_br" else "Amazon US",
-                json.dumps({
-                    "scraped_at": datetime.now().isoformat(),
-                    "source": "bestsellers_scraper",
-                }),
-            ))
-            log.info(f"Inserted: {product['platform_id']} - {product['title'][:50]}...")
+            if existing:
+                # Update existing product
+                cur.execute("""
+                    UPDATE products SET
+                        title = COALESCE(%s, title),
+                        price = COALESCE(%s, price),
+                        currency = COALESCE(%s, currency),
+                        url = COALESCE(%s, url),
+                        image_urls = CASE WHEN %s IS NOT NULL THEN ARRAY[%s]::text[] ELSE image_urls END,
+                        image_hash = COALESCE(%s, image_hash),
+                        review_count = COALESCE(%s, review_count),
+                        review_avg = COALESCE(%s, review_avg),
+                        bsr_rank = COALESCE(%s, bsr_rank),
+                        sales_30d = COALESCE(%s, sales_30d),
+                        category = COALESCE(%s, category),
+                        last_updated = NOW()
+                    WHERE platform = %s AND platform_id = %s
+                """, (
+                    product.get("title"),
+                    product.get("price"),
+                    product.get("currency"),
+                    product.get("url"),
+                    local_image, local_image,
+                    image_hash,
+                    product.get("review_count"),
+                    product.get("review_avg"),
+                    product.get("bsr_rank"),
+                    product.get("sales_30d"),
+                    product.get("category"),
+                    product["platform"],
+                    product["platform_id"],
+                ))
+                log.info(f"Updated: {product['platform_id']} - {product['title'][:50]}...")
+            else:
+                # Insert new product
+                img_arr = [local_image] if local_image else None
+                cur.execute("""
+                    INSERT INTO products (
+                        platform, platform_id, title, price, currency, url,
+                        image_urls, image_hash,
+                        review_count, review_avg, bsr_rank, sales_30d,
+                        category, supplier_name, raw_data
+                    ) VALUES (
+                        %s, %s, %s, %s, %s, %s,
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    )
+                """, (
+                    product["platform"],
+                    product["platform_id"],
+                    product.get("title"),
+                    product.get("price"),
+                    product.get("currency", "BRL" if product["platform"] == "amazon_br" else "USD"),
+                    product.get("url"),
+                    img_arr,
+                    image_hash,
+                    product.get("review_count", 0),
+                    product.get("review_avg"),
+                    product.get("bsr_rank"),
+                    product.get("sales_30d"),
+                    product.get("category"),
+                    "Amazon BR" if product["platform"] == "amazon_br" else "Amazon US",
+                    json.dumps({
+                        "scraped_at": datetime.now().isoformat(),
+                        "source": "bestsellers_scraper",
+                    }),
+                ))
+                log.info(f"Inserted: {product['platform_id']} - {product['title'][:50]}...")
 
-        conn.commit()
-        cur.close()
-        return True
+            conn.commit()
+            cur.close()
+            return True
     except Exception as e:
-        conn.rollback()
         log.error(f"DB error for {product['platform_id']}: {e}")
         return False
-    finally:
-        conn.close()
 
 
 # ── Main Scraping Logic ──────────────────────────────────────────

@@ -1,3 +1,4 @@
+from services.cache import cached, cache_stats
 """Products router — product listing and history endpoints."""
 from fastapi import APIRouter, Query
 from decimal import Decimal
@@ -60,6 +61,7 @@ def list_products(
 
 
 @router.get("/stats")
+@cached(ttl_seconds=60)
 def get_stats():
     """Get platform and category statistics."""
     from database import query as db_query
@@ -93,6 +95,7 @@ def get_stats():
 
 
 @router.get("/categories")
+@cached(ttl_seconds=60)
 def list_categories():
     """List all unique categories with product counts."""
     from database import query as db_query

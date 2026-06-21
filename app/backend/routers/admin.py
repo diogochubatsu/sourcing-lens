@@ -212,3 +212,33 @@ def discover_category(url: str):
     
     except Exception as e:
         return {"ok": False, "error": str(e)}
+
+
+@router.get("/scraper-health")
+def scraper_health(limit: int = 50):
+    """Show recent scraper runs and their status. Useful for monitoring scraper reliability."""
+    from database import query
+    rows = query("""
+        SELECT scraper_name, target_platform, target_category, status,
+               products_scraped, products_inserted, products_updated, errors,
+               error_message, started_at, completed_at, duration_seconds
+        FROM scraper_health
+        ORDER BY started_at DESC
+        LIMIT %s
+    """, (limit,))
+
+    # Summary stats
+    summary = query("""
+        SELECT
+            COUNT(*) FILTER (WHERE status='success') as success_count,
+            COUNT(*) FILTER (WHERE status='error') as error_count,
+            COUNT(*) FILTER (WHERE status='partial') as partial_count,
+            COUNT(*) as total_runs,
+            MAX(started_at) as last_run,
+            SUM(products_inserted) as total_products_inserted
+        FROM scraper_health
+    """)
+    return {
+        "summary": summary[0] if summary else {},
+        "runs": rows
+    }

@@ -12,6 +12,7 @@ from routers import matches_router, products_router, users_router, alerts_router
 from routers.product import router as product_router
 from routers.admin import router as admin_router
 
+from services.cache import cached, cache_stats
 # ── Logging ──────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
@@ -61,6 +62,7 @@ def health_check():
 # ── Price Drops (optimized) ─────────────────────────────────
 
 @app.get("/api/price-drops")
+@cached(ttl_seconds=30)
 def get_price_drops(limit: int = 5):
     """Return top matches with biggest recent price gap changes.
     
@@ -163,6 +165,14 @@ images_dir = os.path.join(os.path.dirname(__file__), "..", "..", "data", "images
 if os.path.exists(images_dir):
     app.mount("/images", StaticFiles(directory=images_dir), name="images")
 
+
+
+# ── Cache Stats ─────────────────────────────────────────────
+
+@app.get("/api/cache-stats")
+def cache_stats_endpoint():
+    from services.cache import cache_stats
+    return cache_stats()
 
 # ── Lifecycle ────────────────────────────────────────────────
 
