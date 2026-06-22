@@ -287,16 +287,24 @@ KEYWORD_RULES = {
     ],
     # Cozinha
     ("Cozinha", "Utensílios"): [
-        (r"pote\s+herm[ée]tico|pote\s+de\s+pl[áa]stico|porta\s+(?:mantimento|cereal)", "Pote"),
+        (r"pote\s+herm[ée]tico|pote\s+de\s+pl[áa]stico|porta\s+(?:mantimento|cereal)|pote\s+de\s+vidro", "Pote"),
         (r"garrafa\s+t[ée]rmica|copo\s+t[ée]rmico", "Garrafa"),
-        (r"talher|garfo|faca\s+de\s+cozinha|colher", "Talher"),
+        (r"talher|garfo|faca\s+de\s+cozinha|colher|faqueiro", "Talher"),
+        (r"pipoqueira", "Pipoqueira"),
+        (r"forma\s+de\s+(?:gelo|bolo)|assadeira", "Forma"),
+        (r"utens[ií]lios?\s+de\s+cozinha|concha|pegador|escumadeira|amassador|abridor", "Utensílios"),
+        (r"bowls?|tigelas?", "Bowl"),
+        (r"c[aá]psula\s+(?:caf[eé]|nescaf[eé])|dolce\s+gusto", "Cápsula"),
     ],
     ("Cozinha", "Eletrodomésticos"): [
         (r"air\s*fryer|fritadeira\s+el[ée]trica", "Airfryer"),
         (r"cafeteira|cafeteira\s+el[ée]trica|cappuccino", "Cafeteira"),
-        (r"liquidificador|processador", "Liquidificador"),
+        (r"liquidificador|processador|triturador", "Liquidificador"),
+        (r"mixer\b|batedeira\b", "Mixer"),
         (r"sanduicheira|grill\s+el[ée]trico", "Sanduicheira"),
         (r"forno\s+el[ée]trico|forno\s+de\s+banco", "Forno Elétrico"),
+        (r"chaleira\b", "Chaleira"),
+        (r"moedor\s+de\s+caf[ée]|moinho\s+de\s+caf[ée]", "Moedor de Café"),
     ],
     # Iluminação
     ("Iluminação", "Ring Light"): [
@@ -348,6 +356,45 @@ KEYWORD_RULES = {
         (r"bolsa\s+t[ée]rmica|cooler\s+de\s+praia", "Bolsa Térmica"),
     ],
 }
+
+
+def detect_l1_from_title(title):
+    """Detect L1 category from title using broad keyword patterns.
+
+    Returns L1 string or None.
+    """
+    if not title:
+        return None
+    title_lower = title.lower()
+
+    # Order matters: most specific first
+    rules = [
+        ('Acessórios Mobile', r'celular|smartphone|capa celular|carregador|cabo usb|pen drive|cart[aã]o sd|suporte celular|carro.*celular'),
+        ('Audio', r'fone\b|headphone|headset|caixa de som|caixa ac[uú]stica|amplificada|microfone|soundbar|mp3|aparelho de som'),
+        ('Bebê', r'beb[eê]|fralda|mamadeira|carrinho beb[eê]|chupeta|body beb[eê]|berço'),
+        ('Beleza', r'shampoo|condicionador|hidratante|protetor solar|batom|base\b|m[aá]scara de c[ií]lios|creme dental|maquiagem|perfume|skincare|barbeador|aparador'),
+        ('Bolsas', r'mochila de m[ãa]o|bolsa f[eê]mea|bolsa feminina|bolsa transversal|bolsa t[eê]xtil|bolsa de praia|carteira\b|bolsa de couro|mochila escolar|necessaire|clutch'),
+        ('Brinquedos', r'brinquedo|jogo\b|boneca|boneco|pel[uú]cia|quebra.cabe[cç]a|puzzle|action figure|slime|hot wheels|pista|bola\b|carrinho de brinquedo|quebra.cabe[cç]a|massinha|play.doh|cubo m[aá]gico|tris\b|pega varetas'),
+        ('Casa', r'tapete|toalha de banho|cesto|varal|cabide|organizador|p[oó]t[ae]|vaso\b|garrafa t[eé]rmica|copo\b|prateleira|arm[aá]rio|cama\b|sof[aá]|mesinha'),
+        ('Cozinha', r'panela|frigideira|garrafa t[eé]rmica|pote|afryer|airfryer|cafeteira|espremedor|coador|forma de gelo|ta[cç]a|jogo de jantar|faqueiro|concha|pegador|escumadeira|amassador|abridor|mixer\b|chaleira|bowls?|tigelas?|pipoqueira|mochaccino|c[aá]psula caf[eé]|porta.temperos|cuscuzeira|assadeira|forma de bolo|kit utens[ií]lios de cozinha|kit\s+\d+\s+utens[ií]lios\s+de\s+cozinha|lunch box|water bottle|tumbler|thermos|toaster|blender|food scale|kitchen|cookware|grill\b|sandwich|grinder|spatula|shears|sponge|olive oil sprayer|can opener|food storage|cheesecloth|tablecloth|parchment paper|paper liners|meat thermometer|coffee|mug\b|trash can|frying pan|saucepan|cutting board|colander|rolling pin'),
+        ('Esportes', r'tapete yoga|halter|haltere|peso\b|smart tag|localizador|rastreador|suplemento|creatina|whey|faixa el[aá]stica|skate|patins|bicicleta|patinete'),
+        ('Ferramentas', r'furadeira|parafusadeira|chave\b|soquete|jogo de chave|alic[ae]|martelo|ferramenta|multimetro|paquímetro|n[íi]vel|lixadeira|esmeril|serra\s*m[aá]quina'),
+        ('Fotografia', r'tr[ií]p[eê]|monop[eé]|suporte c[âa]mera|gimbal|estabilizador|anel adaptador|filtro\s*uv|flash\b|cart[aã]o mem[oó]ria'),
+        ('Iluminação', r'ring light|luz led|bast[ãa]o led|painel led|softbox|ilumina[cç][ãa]o|lanterna|abajur|lumin[áa]ria'),
+        ('Meias', r'^meia(s)?\b|\bmeia(s)?\s+cano|\bmeia(s)?\s+masculin|\bmeia(s)?\s+feminin|kit\s+meia'),
+        ('Mochilas', r'\bmochila(s)?\b|mochila escolar|mochila de trilha|mochila de notebook|mochila executiva'),
+        ('Moda', r'camiseta|camisa\b|cal[cç]a|short|vestido|saia|blusa|jaqueta|moletom|agasalho|bon[eé]|chapéu|gravata|cinto|len[cç]o|carteira\b|pulseira|rel[óo]gio de pulso|sunglasses|[oó]culos de sol|chinelo|t[eê]nis\b|sapatilha|cueca|suti[ãa]|lingerie|calcinha|meia\b'),
+        ('Moda Intima', r'cueca|suti[ãa]|calcinha|lingerie|top\b|body modelador'),
+        ('Pet Shop', r'cachorro|gato\b|ra[cç][ãa]o|pet\b|caixa de areia|areia sanit[áa]ria|tapete higi[eê]nico|brinquedo pet|comedouro|bebedouro|coleira|peitoral|caixa de transporte pet'),
+        ('Praia', r'cadeira de praia|guarda.sol|boia|sombrinha|colete salva|toalha de praia|tapete de praia|bolsa de praia|saída de praia|maiô|biquíni|sunga|sunga\b|canga'),
+        ('Wearables', r'smartwatch|rel[óo]gio inteligente|apple watch|galaxy watch|mi band|amazfit|oura ring|smart band|pulseira inteligente|garmin\b|fitbit'),
+    ]
+
+    for l1_name, pattern in rules:
+        if re.search(pattern, title_lower, re.IGNORECASE):
+            return l1_name
+
+    return None
 
 
 def classify_l3(category_l1, title):
@@ -429,7 +476,13 @@ def main():
         title = p['title']
 
         if not l1 or l1 not in TAXONOMY:
-            continue
+            # Try to detect L1 from title
+            detected_l1 = detect_l1_from_title(title)
+            if detected_l1:
+                l1 = detected_l1
+                cur.execute("UPDATE products SET category_l1=%s WHERE id=%s", (l1, p['id']))
+            else:
+                continue
 
         new_l2 = None
         new_l3 = None
