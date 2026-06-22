@@ -215,8 +215,19 @@ python3 scripts/matching_v6.py
 | `DB_PASSWORD` | Database password |
 | `DB_NAME` | Database name |
 | `JWT_SECRET_KEY` | JWT signing secret |
-| `DECODO_USER` | Decodo API username |
-| `DECODO_PASS` | Decodo API password |
+
+### Decodo Tools (in `config/decodo_*.key` files, gitignored)
+
+| Key file | Service | Status |
+|----------|---------|--------|
+| `decodo_scraping.key` | Scraping API (U0000420946) | ✅ Working |
+| `decodo_su.key` | Site Unblocker (U0000434457) | ✅ Working (forward proxy port 60000) |
+| `decodo_br.key` | Residential BR (span5nxws5) | ✅ Working |
+| `decodo_us.key` | US Residential | ✅ Working |
+| `decodo_isp.key` | ISP Static (sp2idylm9q) | ✅ Working |
+| `decodo_mobile.key` | Mobile (spraglxgvk) | ❌ 407 auth fail |
+
+See `DECODO_TOOLBOX.md` for detailed test results and Python usage patterns.
 
 ---
 

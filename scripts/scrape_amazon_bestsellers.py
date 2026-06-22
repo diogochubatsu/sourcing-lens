@@ -13,6 +13,13 @@ Usage:
     python3 scripts/scrape_amazon_bestsellers.py --platform amazon_us
     python3 scripts/scrape_amazon_bestsellers.py --category microphones
     python3 scripts/scrape_amazon_bestsellers.py --dry-run        # no DB writes
+    python3 scripts/scrape_amazon_bestsellers.py --use-su         # Decodo Site Unblocker fallback
+    python3 scripts/scrape_amazon_bestsellers.py --delay 5 --max-requests 10  # gentle mode
+
+Proxies (auto-loaded from config/decodo_*.key):
+    - Residential BR (span5nxws5) — primary for amazon_br
+    - US Residential (span5nxws5) — primary for amazon_us
+    - Decodo Site Unblocker (U0000434457) — fallback for 503/429 blocks (opt-in: --use-su)
 """
 
 import argparse
@@ -28,8 +35,13 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from urllib.parse import urljoin
 
+import ssl
+import urllib.request as _ulib_request
 import requests
 from bs4 import BeautifulSoup
+
+# Disable SSL verification globally for Decodo SU (uses self-signed cert)
+ssl._create_default_https_context = ssl._create_unverified_context
 
 # ── Logging ──────────────────────────────────────────────────────
 LOG_DIR = Path("/mnt/ssd/arbitlens/logs")
@@ -52,6 +64,12 @@ SCRIPT_DIR = Path(__file__).parent
 CATEGORY_FILE = SCRIPT_DIR / "category_ids.json"
 IMAGE_DIR = Path("/mnt/ssd/arbitlens/data/images")
 IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+
+# ── Decodo Keys (gitignored) ──────────────────────────────────────
+CONFIG_DIR = Path("/mnt/ssd/arbitlens/config")
+DECODO_SU_KEY = CONFIG_DIR / "decodo_su.key"  # Site Unblocker U0000434457
+DECODO_BR_KEY = CONFIG_DIR / "decodo_br.key"  # Residential BR
+DECODO_US_KEY = CONFIG_DIR / "decodo_us.key"  # US Residential
 
 # ── HTTP Config ──────────────────────────────────────────────────
 HEADERS = {
@@ -81,26 +99,115 @@ def load_categories() -> dict:
         return json.load(f)
 
 
-def http_get(url: str, retries: int = MAX_RETRIES) -> requests.Response | None:
-    """GET with retries, delay, and proper headers."""
+# Track request count for rate limiting
+_request_count = 0
+_request_count_per_minute = []
+MAX_REQUESTS_PER_MINUTE = 10  # gentle by default; override via --max-requests
+
+def _wait_for_rate_limit():
+    """Block until we are under MAX_REQUESTS_PER_MINUTE per minute."""
+    global _request_count, _request_count_per_minute
+    now = time.time()
+    # Prune entries older than 60s
+    _request_count_per_minute = [t for t in _request_count_per_minute if now - t < 60]
+    if len(_request_count_per_minute) >= MAX_REQUESTS_PER_MINUTE:
+        wait = 60 - (now - _request_count_per_minute[0]) + 0.5
+        if wait > 0:
+            log.info(f"Rate limit: sleeping {wait:.1f}s ({len(_request_count_per_minute)} requests in last 60s)")
+            time.sleep(wait)
+    _request_count_per_minute.append(time.time())
+    _request_count += 1
+
+
+def http_get(url: str, retries: int = MAX_RETRIES, use_su: bool = False) -> requests.Response | None:
+    """GET with retries, delay, rate limit, and optional SU fallback.
+
+    Args:
+        url: Target URL
+        retries: Max attempts
+        use_su: If True, fall back to Decodo Site Unblocker on 503/429/block
+    """
     for attempt in range(retries):
         try:
+            _wait_for_rate_limit()
             time.sleep(REQUEST_DELAY)
             resp = requests.get(url, headers=HEADERS, timeout=30)
-            if resp.status_code == 503:
-                log.warning(f"503 on {url} (attempt {attempt+1}/{retries}), retrying...")
-                time.sleep(RETRY_DELAY * (attempt + 1))
-                continue
             if resp.status_code == 200:
                 return resp
-            log.warning(f"HTTP {resp.status_code} on {url} (attempt {attempt+1}/{retries})")
+            if resp.status_code == 503:
+                log.warning(f"503 on {url} (attempt {attempt+1}/{retries})")
+                if use_su and attempt == retries - 1:  # last attempt, try SU
+                    log.info(f"Falling back to Decodo Site Unblocker for {url}")
+                    su_resp = http_get_su(url)
+                    if su_resp:
+                        return su_resp
+                time.sleep(RETRY_DELAY * (attempt + 1))
+                continue
+            if resp.status_code in (429, 403):  # rate limited or blocked
+                log.warning(f"HTTP {resp.status_code} on {url} (attempt {attempt+1}/{retries})")
+                if use_su:
+                    log.info(f"Falling back to Decodo Site Unblocker for {url}")
+                    su_resp = http_get_su(url)
+                    if su_resp:
+                        return su_resp
+                time.sleep(RETRY_DELAY * (attempt + 1))
+                continue
             if resp.status_code == 404:
                 return None  # don't retry 404
+            log.warning(f"HTTP {resp.status_code} on {url} (attempt {attempt+1}/{retries})")
         except requests.RequestException as e:
             log.warning(f"Request error on {url} (attempt {attempt+1}/{retries}): {e}")
             time.sleep(RETRY_DELAY * (attempt + 1))
     log.error(f"Failed after {retries} attempts: {url}")
     return None
+
+
+def http_get_su(url: str, timeout: int = 60) -> requests.Response | None:
+    """Fetch URL via Decodo Site Unblocker (forward proxy on port 60000).
+
+    Bypasses Amazon bot detection by:
+    - Using a residential IP
+    - Changing browser fingerprint via X-SU headers
+    - Server-side JS rendering (X-SU-Headless: html)
+
+    Returns a requests.Response-like object with .text, .status_code, .content.
+    """
+    if not DECODO_SU_KEY.exists():
+        log.error(f"SU key not found: {DECODO_SU_KEY}")
+        return None
+    auth = DECODO_SU_KEY.read_text().strip()
+    proxy = f"https://{auth}@unblock.decodo.com:60000"
+
+    proxy_handler = _ulib_request.ProxyHandler({
+        "http": proxy,
+        "https": proxy,
+    })
+    opener = _ulib_request.build_opener(proxy_handler)
+
+    req = _ulib_request.Request(url)
+    # Copy our normal headers
+    for k, v in HEADERS.items():
+        req.add_header(k, v)
+    # Add SU-specific headers for browser fingerprint + JS rendering
+    req.add_header("X-SU-Locale", "pt-br" if "amazon.com.br" in url else "en-us")
+    req.add_header("X-SU-Device-Type", "desktop")
+    req.add_header("X-SU-Headless", "html")
+
+    try:
+        _wait_for_rate_limit()  # also rate limit SU calls
+        with opener.open(req, timeout=timeout) as resp:
+            body = resp.read()
+            # Wrap in a requests.Response-like object
+            r = requests.Response()
+            r.status_code = resp.status
+            r._content = body
+            r.url = url
+            r.headers = dict(resp.headers.items())
+            r.encoding = "utf-8"
+            return r
+    except Exception as e:
+        log.error(f"SU request failed for {url}: {e}")
+        return None
 
 
 def parse_price_br(text: str) -> Decimal | None:
@@ -625,7 +732,7 @@ def upsert_product(product: dict, dry_run: bool = False) -> bool:
 # ── Main Scraping Logic ──────────────────────────────────────────
 
 def scrape_platform(platform: str, categories: dict, category_filter: str = None,
-                    dry_run: bool = False, enrich: bool = True) -> dict:
+                    dry_run: bool = False, enrich: bool = True, use_su: bool = False) -> dict:
     """Scrape best sellers for a platform. Returns stats dict."""
     platform_data = categories.get(platform, {})
     if not platform_data:
@@ -652,7 +759,7 @@ def scrape_platform(platform: str, categories: dict, category_filter: str = None
         log.info(f"Scraping {platform} / {cat_name}: {url}")
         log.info(f"=" * 60)
 
-        resp = http_get(url)
+        resp = http_get(url, use_su=use_su)
         if not resp:
             log.error(f"Failed to fetch best sellers page for {cat_name}")
             total_errors += 1
@@ -679,7 +786,7 @@ def scrape_platform(platform: str, categories: dict, category_filter: str = None
             if enrich and i < 10:  # Only enrich top 10 per category (cost control)
                 detail_url = product["url"]
                 log.info(f"  [{i+1}/{len(products)}] Enriching {product['platform_id']}...")
-                detail_resp = http_get(detail_url)
+                detail_resp = http_get(detail_url, use_su=use_su)
                 if detail_resp:
                     if platform == "amazon_br":
                         product = parse_product_page_br(detail_resp.text, product)
@@ -715,7 +822,22 @@ def main():
                         help="Skip detail page enrichment (faster, less data)")
     parser.add_argument("--max-per-category", type=int, default=50,
                         help="Max products to process per category (default: 50)")
+    parser.add_argument("--use-su", action="store_true",
+                        help="Fall back to Decodo Site Unblocker on 503/429/block (opt-in)")
+    parser.add_argument("--delay", type=float, default=None,
+                        help="Override REQUEST_DELAY (seconds between requests)")
+    parser.add_argument("--max-requests", type=int, default=None,
+                        help="Override MAX_REQUESTS_PER_MINUTE (default: 10, gentle)")
     args = parser.parse_args()
+
+    # Apply overrides
+    global REQUEST_DELAY, MAX_REQUESTS_PER_MINUTE
+    if args.delay is not None:
+        REQUEST_DELAY = args.delay
+        log.info(f"Delay override: {REQUEST_DELAY}s")
+    if args.max_requests is not None:
+        MAX_REQUESTS_PER_MINUTE = args.max_requests
+        log.info(f"Rate limit override: {MAX_REQUESTS_PER_MINUTE} req/min")
 
     log.info("=" * 60)
     log.info("Amazon Best Sellers Scraper — starting")
@@ -723,6 +845,8 @@ def main():
     log.info(f"Category: {args.category or 'all'}")
     log.info(f"Dry run: {args.dry_run}")
     log.info(f"Enrich: {not args.no_enrich}")
+    log.info(f"SU fallback: {'ON' if args.use_su else 'OFF'}")
+    log.info(f"Delay: {REQUEST_DELAY}s | Rate limit: {MAX_REQUESTS_PER_MINUTE} req/min")
     log.info("=" * 60)
 
     categories = load_categories()
@@ -735,6 +859,7 @@ def main():
             categories=categories,
             category_filter=args.category,
             dry_run=args.dry_run,
+            use_su=args.use_su,
             enrich=not args.no_enrich,
         )
         all_stats.append(stats)
