@@ -35,4 +35,4 @@ Thumbs.db
 
 # Subagent temp scripts
 /tmp/
-config/decodo_scraping.key
+config/decodo_*.key
