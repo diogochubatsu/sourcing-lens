@@ -22,7 +22,7 @@ logging.basicConfig(
 logger = logging.getLogger("arbitlens")
 
 # ── App ──────────────────────────────────────────────────────
-app = FastAPI(title="ArbitLens BR", version="0.2.0")
+app = FastAPI(title="ArbitLens BR", version="0.4.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -56,7 +56,7 @@ def health_check():
     except Exception as e:
         logger.error(f"Health check DB error: {e}")
         db_ok = False
-    return {"status": "healthy" if db_ok else "degraded", "database": "connected" if db_ok else "disconnected", "version": "0.2.0"}
+    return {"status": "healthy" if db_ok else "degraded", "database": "connected" if db_ok else "disconnected", "version": "0.4.0"}
 
 
 # ── Price Drops (optimized) ─────────────────────────────────
