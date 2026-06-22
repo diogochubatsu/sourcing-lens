@@ -1,11 +1,17 @@
 # ArbitLens v0.3.0 — Status
 
 ## Data
-- **1,023 active products** across **19 L1 categories** (was 993, +30 Amazon BR Beauty)
-- **432 Amazon BR** | **301 Amazon US** | **290 Mercado Livre** (was 241, +49 new ML)
-- **82 matches** (85% avg confidence)
-  - 70 BR↔ML (CLIP embeddings, threshold 70%)
-  - 12 BR↔US (CLIP embeddings, threshold 70%)
+- **995 active products** across **19 L1 categories**
+- **432 Amazon BR** | **301 Amazon US** | **262 Mercado Livre** (some duplicates removed in cleanup)
+- **68 matches** (85% avg confidence, more precise L1+L2+L3)
+  - 50 BR↔ML (CLIP embeddings, threshold 70%, 15 L1 categories)
+  - 18 BR↔US (CLIP embeddings, threshold 70%)
+
+## Category Taxonomy (v0.3.1)
+- **3-level hierarchy**: L1 (19) → L2 (76) → L3 (299) — see `scripts/taxonomy.py`
+- **80% of products properly classified** (797/995 with specific L3, rest "Geral")
+- Cleanup: 239 L2=L1 circulars fixed, 187 L3=L1 circulars fixed, 2 NULL L1 fixed
+- New tools: `scripts/categorize_products.py` (keyword classifier), `scripts/cleanup_categories.py` (legacy cleanup)
 
 ## Tools (v0.3.0)
 - **Decodo Scraping API** (U0000420946) — ML best-sellers scraping (JSON REST) ✅
