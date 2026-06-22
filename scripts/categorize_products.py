@@ -65,6 +65,10 @@ KEYWORD_RULES = {
         (r"\b(?:hair|argan)\s+oil\b", "Óleo Capilar"),
         (r"\bleave-?in\b|\bhair\s+spray\b|heat\s+protectant", "Leave-in"),
         (r"\bhair\s+serum\b|hair\s+styling", "Finalizador"),
+        (r"\b(?:hair\s+)?dryer\b|\bblow\s+dryer\b|\bsecador\b", "Secador"),
+        (r"\bflat\s+iron\b|\bprancha\b|\bchapinha\b|\bhair\s+straightener\b|\bplaca\s+de\s+cabelo\b", "Prancha"),
+        (r"\b(?:hair\s+)?brush\b|\bescova\s+(?:rotativa|secadora|modeladora)\b", "Escova"),
+        (r"\b(?:hair\s+)?clipper\b|\bmaquina\s+de\s+cortar\s+cabelo\b|\baparador\b", "Aparador"),
         # Portuguese
         (r"shampoo|champ[ãu]", "Shampoo"),
         (r"condicionador", "Condicionador"),
@@ -72,13 +76,29 @@ KEYWORD_RULES = {
         (r"[óo]leo\s+(?:capilar|reparador|reparador)", "Óleo Capilar"),
         (r"leave-?in|spray\s+(?:capilar|finalizador)", "Leave-in"),
         (r"finalizador|s[ée]rum\s+capilar", "Finalizador"),
+        (r"secador\s+de\s+cabelo|prancha\s+(?:de\s+cabelo|profissional|lizze)|chapinha|escova\s+(?:rotativa|secadora|modeladora)", "Secador/Prancha"),
+    ],
+    ("Beleza", "Maquiagem"): [
+        (r"\bmascara\b|\bm[aá]scara\s+de\s+c[ií]lios|\blash\s+sensational", "Máscara de Cílios"),
+        (r"\b(?:eye|eye-)?liner\b|\b(?:eye-)?l[eé]is\b|\blapis\b", "Lápis/Liner"),
+        (r"\bbrow\s+pencil\b|\bbrow\s+gel\b|\b(?:lapis|gel)\s+de\s+sobrancelha\b", "Sobrancelha"),
+        (r"\b(?:lip|batom|gloss)\b|\bbatom\b|\blip\s+gloss\b|\bgloss\s+labial\b", "Batom/Gloss"),
+        (r"\b(?:foundation|base\b|concealer|primer|contorno|p[oó]\b|blush|bronzer|iluminador|highlighter)", "Base"),
+        (r"\bnail\s+polish\b|\besmalte\b", "Esmalte"),
+    ],
+    ("Beleza", "Banho e Corpo"): [
+        (r"\bsabonete\b|\bsoap\b|\bbarra\s+de\s+sabonete\b", "Sabonete"),
+        (r"\bbody\s+(?:wash|lotion|cream|spray|butter|scrub|oil|gel|mist|sponge|loofah|loofa|brush|brushes)\b|\bhidratante\s+corporal\b|\blo[cçc][ãa]o\s+(?:corporal|hidratante)\b|\bgel\s+de\s+banho\b|\b[sáa]b[eê]on\b", "Higiene Corporal"),
     ],
     ("Beleza", "Maquiagem"): [
         (r"batom|gloss|labial", "Batom"),
         (r"m[áa]scara\s+de\s+c[íi]lios|rimel|colossal", "Máscara de Cílios"),
+        (r"\bmascara\b|\bmakeup\b|\blash\s+sensational\b|\blash\s+princess\b|\bfalse\s+lash\b|\bsky\s+high\b", "Máscara de Cílios"),
         (r"base\s+(?:l[íi]quida|matte)", "Base"),
         (r"corretivo|concealer", "Corretivo"),
         (r"p[óo]\s+(?:compacto|transl[úu]cido)", "Pó"),
+        (r"\b(?:eye|eye-)?liner\b|\b(?:eye-)?l[eé]is\b|\blapis\b|\bcolorstay\b|\bwaterproof\b", "Lápis/Liner"),
+        (r"\bbrow\s+pencil\b|\bbrow\s+gel\b|\binstant\s+lift\b|\b(?:lapis|gel)\s+de\s+sobrancelha\b", "Sobrancelha"),
     ],
     ("Beleza", "Higiene"): [
         # English
@@ -129,10 +149,23 @@ KEYWORD_RULES = {
     ],
     ("Bebê", "Higiene"): [
         (r"shampoo\s+(?:beb[êe]|infantil|baby|shamppoo\s+bebe)", "Shampoo"),
+        (r"\b2.?in.?1.*(?:baby\s+)?shampoo\b|\bbody\s+wash.*(?:tear.?free|hypoallergenic)\b|\b(?:honest|cetaphil)\b", "Shampoo"),
         (r"sabonete\s+(?:beb[êe]|infantil|baby\s+wash)", "Sabonete"),
         (r"pomada\s+(?:anti-?assadura|para\s+assadura)|diaper\s+rash", "Pomada"),
-        (r"\bbaby\s+wipes\b|wipes|len[çc]o\s+umedecido|water\s*wipes", "Sabonete"),  # treat wipes as hygiene
-        (r"\bgas\s+relief\b|infant\s+drops|mylicon", "Shampoo"),  # baby care drops
+        (r"\bbaby\s+wipes\b|wipes|len[çc]o\s+umedecido|water\s*wipes", "Sabonete"),
+        (r"\bgas\s+relief\b|infant\s+drops|mylicon", "Shampoo"),
+    ],
+    ("Bebê", "Quarto"): [
+        (r"swaddle|sleep\s+sack|saco\s+de\s+dormir", "Swaddle"),
+        (r"\btoalha.*beb[eê]\b|\bbaby\s+towel\b|\bhooded\s+towel\b", "Toalha"),
+    ],
+    ("Bebê", "Mobilidade"): [
+        (r"canguru|baby\s+carrier|ergon[ôo]mico.*beb[eê]|carrier\s+for", "Canguru"),
+        (r"cadeira\s+(?:para\s+)?alimenta[çc][ãa]o|high\s+chair", "Cadeira Alimentação"),
+    ],
+    ("Bebê", "Alimentação"): [
+        (r"\b(?:orgain|pediasure|Ensure|kids)\b.*\bdrink|\bkids.*protein.*shake\b|\bnutritional.*shake\b", "Bebida"),
+        (r"\b(?:kit|prato)\s+(?:refei[çc][ãa]o|babador|copo|talher)|\bbabador\b|\bbaby\s+bib\b|\bbibs\b", "Refeição"),
     ],
     ("Bebê", "Mobilidade"): [
         (r"carrinho\s+(?:de\s+beb[êe]|para\s+beb[êe])|baby\s+stroller|stroller", "Carrinho"),
@@ -173,8 +206,8 @@ KEYWORD_RULES = {
         (r"carrinho\s+de\s+brinquedo|hot\s*wheels", "Carrinho"),
     ],
     ("Brinquedos", "Jogos"): [
-        (r"jogo\s+de\s+tabuleiro|boardgame", "Tabuleiro"),
-        (r"jogo\s+de\s+cartas|baralho|playing\s+cards|poker\s+cards", "Cartas"),
+        (r"jogo\s+de\s+tabuleiro|boardgame|caiu\s+perdeu", "Tabuleiro"),
+        (r"jogo\s+de\s+cartas|baralho|playing\s+cards|poker\s+cards|\b54\s+cartas\b|cartas\b|\bsleeves\b|card\s+sleeves|tcg|flip\s*7", "Cartas"),
         (r"\bpokemon\s+(?:cards?|cards|booster|collection|ex|gx|tcg)|pok[ée]mon", "Cartas"),
         (r"fantasia|disfarce", "Fantasias"),
     ],
@@ -194,6 +227,33 @@ KEYWORD_RULES = {
     ],
     ("Brinquedos", "Eletrônicos"): [
         (r"\bballoon\b|bal[ãa]o|bal[õo]es|latex\s+balloon|foil\s+balloon|number\s+balloon", "Robô"),  # Wrong L3, will fallback
+    ],
+    ("Brinquedos", "Massinha"): [
+        (r"massinha|massa\s+(?:de|para)\s+modelar|play\.?doh|modelar\b|guache\b|tempera\s+guache|tinta\s+guache", "Massinha"),
+    ],
+    ("Brinquedos", "Livros"): [
+        (r"livr[ãa]o|livro.*colorir|coloring\s+book|primeiras\s+palavras|mang[áa]|jujutsu|naruto|black\s+clover|haiyku|demons\s+slayer|chainsaw\s+man|attack\s+on\s+titan|tower\s+of\s+god", "Livro"),
+    ],
+    ("Brinquedos", "Festa"): [
+        (r"balloon|balloons|garland|party\s+supplies|party\s+favors|bal[ãa]o|bal[õo]es|latex\s+balloon|foil\s+balloon|number\s+balloon", "Balão"),
+    ],
+    ("Brinquedos", "Coleção"): [
+        (r"figurinha|sticker|stickers|album.*figurinha|[áa]lbum.*figurinha|cromos|panini|copa\s+do?\s+mundo|fifa\s*2026|world\s*cup\s*2026", "Figurinhas"),
+    ],
+    ("Brinquedos", "Veículos"): [
+        (r"caminh[ãa]o|caminhonete|carrinho|carrinhos|ve[ií]culo|hot\s+wheels|truck\b|truck\s+toy", "Carrinho"),
+    ],
+    ("Brinquedos", "Sensory"): [
+        (r"squeeze|squishy|slow\s+rising|mochi|neon\s+doh|fidget", "Sensory"),
+    ],
+    ("Brinquedos", "Bebê"): [
+        (r"chocalho|mordedor|argola|wrist\s+rattle|foot\s+finder|pir[âa]mide\s+de\s+argolas|brinquedo.*beb[eê]\b|beb[eê]\s*brinquedo", "Bebê"),
+    ],
+    ("Brinquedos", "Cubo Mágico"): [
+        (r"cubo\s+m[áa]gico|rubik|pega\s+varetas", "Cubo Mágico"),
+    ],
+    ("Brinquedos", "Outros"): [
+        (r"apito|chocalho|cofre\s+infantil|berimbau|viol[ãa]o\s+infantil|teclado\s+infantil|leapfrog|learning\s+friends|date\s+night\s+dice", "Outros"),
     ],
     # Moda
     ("Moda", "Roupas"): [
@@ -264,18 +324,34 @@ KEYWORD_RULES = {
     ],
     # Casa
     ("Casa", "Cozinha"): [
-        (r"pote\s+herm[ée]tico|pote\s+de\s+vidro|pote\s+pl[áa]stico", "Pote Hermético"),
+        (r"pote\s+herm[ée]tico|pote\s+de\s+vidro|pote\s+pl[áa]stico|potes\s+herm[ée]ticos|kit\s+pot[ei]s|vidro\s+herm[ée]tico|porta\s+mantimento|porta\s+tempero", "Pote Hermético"),
         (r"garrafa\s+t[ée]rmica|garrafa\s+stanley|copo\s+t[ée]rmico|modus", "Garrafa Térmica"),
         (r"copo\s+de\s+(?:cerveja|vidro|pl[áa]stico)|caneca", "Copo"),
+        (r"bolsa\s+t[ée]rmica|lancheira|bolsa\s+marmita|cooler\s+bag|cooler|cooler\s+para", "Bolsa Térmica"),
+    ],
+    ("Casa", "Lavanderia"): [
+        (r"cesto\s+de\s+bambu|cesto\s+de\s+roupa|cesto\s+para\s+lavanderia|cesto\s+suju|hamper", "Cesto"),
+        (r"tapete\s+(?:de\s+entrada|para\s+entrada|door\s+mat|entryway|entrada|porta)", "Tapete de Entrada"),
     ],
     ("Casa", "Banho"): [
-        (r"tapete\s+de\s+banho|tapete\s+para\s+banheiro|tapete\s+de\s+banheiro", "Tapete de Banho"),
-        (r"toalha\s+de\s+banho|toalha\s+de\s+rosto|toalha\s+de\s+m[ãa]o", "Toalha"),
+        (r"tapete\s+de\s+banho|tapete\s+para\s+banheiro|tapete\s+de\s+banheiro|bath\s+mat|bath\s+rug|bathroom\s+rug|bath\s+mats?|bath\s+rugs?", "Tapete de Banho"),
+        (r"toalha\s+de\s+banho|toalha\s+de\s+rosto|toalha\s+de\s+m[ãa]o|bath\s+towel", "Toalha"),
+        (r"box\s+para\s+banheiro|box\s+de\s+banheiro|chuveiro|shower\s+curtain", "Chuveiro"),
+    ],
+    ("Casa", "Móveis"): [
+        (r"\bm[óo]vel\b|\bmesa\s+de\s+centro\b|\bprateleira\b|\bestante\b|\barm[áa]rio\b|\bcama\s+(?:box|infantil|queen|casal|solteiro)\b|\bsof[áa]\b|\bcadeira\s+de\s+escrit[óo]rio\b|\bcadeira\b|\bpoltrona\b|\bguarda.?roupa\b|\bc[ôo]moda\b|\bbalc[ãa]o\b", "Móvel"),
+    ],
+    ("Casa", "Lavanderia"): [
+        (r"\bvaral\s+(?:de\s+ch[ãa]o|port[áa]til|retr[áa]til)\b|\bclothing\s+rack\b|\bdrying\s+rack\b|\bchap[ãa]\s+de\s+passar\b|\bferro\s+de\s+passar\b|\bclothesline\b", "Varal"),
+    ],
+    ("Casa", "Cama"): [
+        (r"\btravesseiro\b|\bpillow\b|\bfronha\b|\bedredom\b|\bsheet\s+set\b|\bbed\s+sheet\b|\bled\s+(?:light|comforter|blanket|cover)\b|\bcobertor\b|\bcolcha\b|\bcobertor\b|\bcapa\s+de\+edredom\b", "Cama"),
     ],
     ("Casa", "Organização"): [
-        (r"cabide|cabides", "Cabide"),
-        (r"cesto\s+de\s+roupa|cesto\s+para\s+lavanderia", "Cesto"),
-        (r"organizador|sapateira", "Organizador"),
+        (r"cabide|cabides|hangers", "Cabide"),
+        (r"cesto\s+de\s+roupa|cesto\s+para\s+lavanderia|hamper", "Cesto"),
+        (r"organizador|sapateira|shoe\s+rack|storage", "Organizador"),
+        (r"lixeira|trash\s+can|garbage", "Lixeira"),
     ],
     ("Casa", "Decoração"): [
         (r"tapete\s+(?:decorativo|para\s+sala|persa|oriental)", "Tapete Decorativo"),
@@ -354,7 +430,123 @@ KEYWORD_RULES = {
     ("Praia", "Acessórios"): [
         (r"clips?\s+(?:de\s+praia|para\s+toalha|grande)|prendedor\s+de\s+toalha", "Clips"),
         (r"bolsa\s+t[ée]rmica|cooler\s+de\s+praia", "Bolsa Térmica"),
+    ],    ("Pet Shop", "Higiene"): [
+        (r"\btapete\s+higi[eê]nico\b|pet\s+pad|puppy\s+pad|fralda\s+para\s+cachorro|manta\s+fralda", "Tapete Higiênico"),
     ],
+    ("Pet Shop", "Alimentação"): [
+        (r"\bra[cç][ãa]o\b|\bpet\s+food\b|\b(?:dog|cat)\s+food\b|\bgolden\b|\bquatree\b|\bsupreme\b", "Ração"),
+    ],
+    ("Pet Shop", "Saúde"): [
+        (r"\bantipulgas\b|\bsimparic\b|\bnexgard\b|\bbravecto\b|\b(?:pulgas|carrapatos)\b|\bverm[ií]fugo\b|\bvacina\b", "Antipulgas"),
+    ],
+    ("Pet Shop", "Brinquedos"): [
+        (r"\barranhador\b|\bbrinquedo.*(?:gato|cachorro|pet)|\binterativo.*pet", "Brinquedo Pet"),
+    ],
+    ("Pet Shop", "Sanitário"): [
+        (r"\bareia\s+sanit[áa]ria\b|\bcaixa\s+de\s+areia\b|\blitter\b", "Areia Sanitária"),
+    ],
+    ("Pet Shop", "Acessórios"): [
+        (r"\bcama\s+(?:de\s+)?(?:gato|cachorro|pet)|\bcomedouro\b|\bbebedouro\b|\bcoleira\b|\bpeitoral\b|\broupa.*(?:cachorro|pet)|\broupinha.*pet|\broupinha\b", "Acessório Pet"),
+    ],
+    ("Mochilas", "Mochilas"): [
+        (r"\bmochila\b.*(?:notebook|executiva|viagem|trilha|escolar|feminina|masculina|grande|refor[çc]ada|usb|couro|resistente|preto|imperme[áa]vel)", "Mochila"),
+        (r"\bmochila\b", "Mochila"),
+        (r"\bcapa\s+para\s+mochila\b|\bcapa\s+mochila\b", "Capa"),
+    ],
+    ("Moda", "Acessórios"): [
+        (r"\bboina\b|\bgorro\b|\bchapéu\b|\bbon[ée]\b|\btouca\b", "Chapéu/Boné"),
+        (r"\bpulseira\b|\bbracelete\b|\bcollar\b", "Pulseira"),
+    ],
+    ("Bolsas", "Carteira"): [
+        (r"\bcarteira\b.*(?:masculina|feminina|rfid|couro)|\bcarteira\s+masculina\b|\bcarteira\s+feminina\b|\bwallet\b", "Carteira"),
+        (r"\bcarteira\b", "Carteira"),
+    ],
+    ("Audio", "Som Automotivo"): [
+        (r"\bprocessador\s+de\s+[áa]udio\b|\bcrossover\b|\bequalizador\b|\bstetsom\b", "Processador"),
+        (r"\bcaixa\s+amplificada\b|\bcaixa\s+de\s+som\s+amplificada\b|\bconnect\s+lights\b", "Caixa Amplificada"),
+        (r"\bboombox\b|\bbs-?01\b|\baiwa\b", "Boombox"),
+    ],
+    ("Bebê", "Alimentação"): [
+        (r"\bcadeira\s+para\s+alimenta[çc][ãa]o\b|\bcadeira\s+de\s+alimenta[çc][ãa]o\b|\bcadeira\s+poke\b", "Cadeira"),
+        (r"\bcanguru\b.*beb[eê]|\bcanguru\s+baby\b|baby\s+bear", "Canguru"),
+        (r"\borgain\b.*kids|\bkids.*shake\b|\bnutritional\s+drink\b", "Bebida"),
+        (r"\bforma\s+de\s+gelo\b.*papinha|\bforma.*beb[eê].*drinks|\bforma\s+de\s+gelo\b.*sil", "Forma"),
+    ],
+    ("Beleza", "Skincare"): [
+        (r"\bcicaplast\b|\bbepantol\b|\bla\s+roche.?posay\b", "Reparador"),
+        (r"\bovomaltine\b|\bcreme\s+crocante\b", "Outros"),
+        (r"\bmorte\s+s[uú]bita\b|\bhidratante.*lola\b|\bm[áa]scara\s+super\s+hidratante\b", "Máscara Capilar"),
+    ],
+    ("Casa", "Limpeza"): [
+        (r"\bsab[ãa]o\s+em\s+barra\b|\bsabonete\s+em\s+barra\b|\bsab[ãa]o\s+dove\b", "Sabão"),
+        (r"\bpercarbonato\b|\btira\s+manchas\b|\balvejante\b|\bdesinfetante\b", "Limpeza"),
+        (r"\bpapel\s+higi[eê]nico\b|\btoilet\s+paper\b|\bpersonal\s+vip\b", "Papel Higiênico"),
+        (r"\bcesto\s+de\s+bambu\b|\bhamper\b", "Cesto"),
+    ],
+    ("Casa", "Banho"): [
+        (r"\bdoor\s+mat\b|\bentryway\s+rug\b|\bsuper\s+absorbent\s+door\s+mat\b|\bentryway\b", "Tapete de Entrada"),
+    ],
+    ("Ferramentas", "Soquetes"): [
+        (r"\bsoquete\b|\bjogo\s+soquetes\b|\bcatraca\b|\bsoquetes?\s+estriado\b", "Soquete"),
+    ],
+    ("Meias", "Meia Calça"): [
+        (r"\bmeia\s+cal[cç]a\b", "Meia Calça"),
+        (r"\bmeia\s+cano\s+(?:m[eé]dio|alto|baixo)\b|\bat...[oó]alhada\b|\batoalhada\b", "Cano Médio/Alto"),
+    ],
+    ("Bolsas", "Carteira"): [
+        (r"\bcarteira\b", "Carteira"),
+        (r"\bwallet\b|\brfid\b|\bporta\s+cart[ãa]o\b", "Carteira"),
+    ],
+    ("Moda Intima", "Cueca"): [
+        (r"\bkit\s+(?:\d+\s+)?cueca\b|\bboxer\s+masculin[oa]\b|\bsandrini\b", "Cueca"),
+    ],
+    ("Auto", "Acessórios Auto"): [
+        (r"\bautom[óo]vel\b|\bcarro\b|\bauto\b.*\bdescanso\b|\bapoio\s+para\s+a\s+cabe[çc]a\b|\benxovais\b", "Acessório Auto"),
+    ],
+    ("Brinquedos", "Splash/Água"): [
+        (r"\bsplash\s+pond\b|\bwater\s+table\b|\bsplash\s+ez\b|\bsplash\s+pad\b|\bsplashes\b|\binfl[aá]vel\s+pool\b|\bpool\s+float\b|\bfloating\s+chair\b", "Piscina/Água"),
+        (r"\bwater\s+blaster\b|\bwater\s+gun\b|\bmax\s+liquidator\b", "Pistola Água"),
+        (r"\bbubbles\b|\bfubbles\b|\bbubble\s+solu[cç][ãa]o\b|\bbolha\s+de\s+sab[ãa]o\b", "Bolhas"),
+        (r"\bfisher.?price\b.*procurar|\bprocurar\s+e\s+encontrar\b", "Educativo"),
+    ],
+    ("Brinquedos", "Presentes"): [
+        (r"\bgifts?\s+for\s+(?:dad|fath)|\bgifts?\s+from\s+(?:daught|son)|\bstocking\s+stuffers?\b|\bwhite\s+elephant\b", "Presente"),
+    ],
+    ("Bolsas", "Necessaire"): [
+        (r"\bgummy\s+rosa\b|\bfliptop\b", "Necessaire"),
+    ],
+    ("Brinquedos", "Artesanato"): [
+        (r"\bpins\s+e\s+bottons\b|\bbuttons?\b|\bbutton\s+machine\b|\bmecolour\b", "Artesanato"),
+    ],
+    ("Moda", "Carteira"): [
+        (r"\bcarteira\b", "Carteira"),
+        (r"\bwallet\b|\brfid\b|\bporta\s+cart[ãa]o\b", "Carteira"),
+    ],
+    ("Moda", "Artesanato"): [
+        (r"\bpins?\s+e\s+bottons?\b|\bbuttons?\b|\bbutton\s+machine\b|\bmecolour\b", "Artesanato"),
+    ],
+    ("Casa", "Pote"): [
+        (r"\bpot[ei]s?\s+herm[ée]tic[oi]s?\b|\bkit\s+pot[ei]s\b|\bpote\s+de\s+vidro\b|\bkit\s+\d+\s+potes\b|\bvidro\s+borossilicato\b", "Pote"),
+    ],
+    ("Casa", "Outros"): [
+        (r"\bgummy\s+rosa\b|\bfliptop\b", "Outros"),
+    ],
+    ("Bebê", "Industrial"): [
+        (r"\bluvas?\s+nitr[ií]licas?\b", "Luvas"),
+        (r"\bport[ãa]o\s+pet\b|\ba[çc]omix\b", "Outros"),
+        (r"\bsab[ãa]o\s+em\s+barra\b|\bsab[ãa]o\s+dove\b", "Sabão"),
+    ],
+    ("Beleza", "Industrial"): [
+        (r"\bpercarbonato\b|\btira\s+manchas\b|\balvejante\b", "Limpeza"),
+        (r"\bpapel\s+higi[eê]nico\b|\btoilet\s+paper\b", "Higiene"),
+    ],
+    ("Bolsas", "Auto"): [
+        (r"\bautom[óo]vel\b|\benxovais\b|\bapoio\s+para\s+(?:a\s+)?cabe[çc]a\b", "Acessório Auto"),
+    ],
+    ("Brinquedos", "Utensílios"): [
+        (r"\butens[ií]lios\s+de\s+cozinha\b|\bkit\s+utens[ií]lios\b|\bkit\s+\d+\s+utens[ií]lios\b", "Utensílios"),
+    ],
+
 }
 
 
@@ -384,16 +576,12 @@ def detect_l1_from_title(title):
         ('Meias', r'^meia(s)?\b|\bmeia(s)?\s+cano|\bmeia(s)?\s+masculin|\bmeia(s)?\s+feminin|kit\s+meia'),
         ('Mochilas', r'\bmochila(s)?\b|mochila escolar|mochila de trilha|mochila de notebook|mochila executiva'),
         ('Moda', r'camiseta|camisa\b|cal[cç]a|short|vestido|saia|blusa|jaqueta|moletom|agasalho|bon[eé]|chapéu|gravata|cinto|len[cç]o|carteira\b|pulseira|rel[óo]gio de pulso|sunglasses|[oó]culos de sol|chinelo|t[eê]nis\b|sapatilha|cueca|suti[ãa]|lingerie|calcinha|meia\b'),
+        ('Auto', r'\bautom[óo]vel\b|\bcarro\b|\bauto\b.*\bdescanso\b'),
         ('Moda Intima', r'cueca|suti[ãa]|calcinha|lingerie|top\b|body modelador'),
-        ('Pet Shop', r'cachorro|gato\b|ra[cç][ãa]o|pet\b|caixa de areia|areia sanit[áa]ria|tapete higi[eê]nico|brinquedo pet|comedouro|bebedouro|coleira|peitoral|caixa de transporte pet'),
-        ('Praia', r'cadeira de praia|guarda.sol|boia|sombrinha|colete salva|toalha de praia|tapete de praia|bolsa de praia|saída de praia|maiô|biquíni|sunga|sunga\b|canga'),
-        ('Wearables', r'smartwatch|rel[óo]gio inteligente|apple watch|galaxy watch|mi band|amazfit|oura ring|smart band|pulseira inteligente|garmin\b|fitbit'),
     ]
-
-    for l1_name, pattern in rules:
+    for l1, pattern in rules:
         if re.search(pattern, title_lower, re.IGNORECASE):
-            return l1_name
-
+            return l1
     return None
 
 
