@@ -36,6 +36,12 @@ KEYWORD_RULES = {
     # Beleza (EN + PT)
     ("Beleza", "Skincare"): [
         # English
+        (r"\btoner\b|\btonic\b|t[ôo]nico|toner\s+pads?|exfoliating\s+toner", "Limpeza Facial"),
+        (r"\bcleanser\b|\bcleansing\b|oil\s+cleansing|micellar|mise[èe]la", "Limpeza Facial"),
+        (r"\bpatch\b|pimple\s+patch|acne\s+patch|hydrocolloid", "Limpeza Facial"),
+        (r"\bóleo\s+de\s+(?:banho|limpeza)|\bbath\s+oil\b", "Reparador"),
+        (r"\bmáscara\s+de\s+tratamento\b|hair\s+mask|deep\s+mask|collagen\s+mask|bio-?collagen", "Reparador"),
+        # Original
         (r"\b(?:hydrating|moisturizing|moisturizer|moisture)\s+(?:cream|lotion|gel)|facial\s+moisturizer|face\s+cream", "Hidratante Facial"),
         (r"body\s+(?:lotion|moisturizer|cream)|body\s+butter", "Hidratante Corporal"),
         (r"\b(?:sunscreen|spf\s*\d+)|sun\s+protection|uv\s+protection", "Protetor Solar"),
@@ -117,19 +123,26 @@ KEYWORD_RULES = {
         (r"estimula[çc][ãa]o\s+visual|estimula[çc][ãa]o\s+precoce", "Estimulação"),
     ],
     ("Bebê", "Alimentação"): [
-        (r"mamadeira|mamaderas", "Mamadeira"),
-        (r"copo\s+(?:com\s+bico|treinamento)", "Copo com Bico"),
-        (r"prato\s+(?:de\s+beb[êe]|infantil)|pratinho", "Prato"),
+        (r"mamadeira|mamaderas|baby\s+bottle|bottle\s+nipple", "Mamadeira"),
+        (r"copo\s+(?:com\s+bico|treinamento)|sippy\s+cup|straw\s+cup|training\s+cup", "Copo com Bico"),
+        (r"prato\s+(?:de\s+beb[êe]|infantil)|pratinho|baby\s+plate", "Prato"),
     ],
     ("Bebê", "Higiene"): [
-        (r"shampoo\s+(?:beb[êe]|infantil)|shamppoo\s+bebe", "Shampoo"),
-        (r"sabonete\s+(?:beb[êe]|infantil)", "Sabonete"),
-        (r"pomada\s+(?:anti-?assadura|para\s+assadura)", "Pomada"),
+        (r"shampoo\s+(?:beb[êe]|infantil|baby|shamppoo\s+bebe)", "Shampoo"),
+        (r"sabonete\s+(?:beb[êe]|infantil|baby\s+wash)", "Sabonete"),
+        (r"pomada\s+(?:anti-?assadura|para\s+assadura)|diaper\s+rash", "Pomada"),
+        (r"\bbaby\s+wipes\b|wipes|len[çc]o\s+umedecido|water\s*wipes", "Sabonete"),  # treat wipes as hygiene
+        (r"\bgas\s+relief\b|infant\s+drops|mylicon", "Shampoo"),  # baby care drops
     ],
     ("Bebê", "Mobilidade"): [
-        (r"carrinho\s+(?:de\s+beb[êe]|para\s+beb[êe])", "Carrinho"),
-        (r"beb[êe]\s+conforto|ber[çc]o\s+auto", "Bebê Conforto"),
-        (r"cadeirinha\s+(?:para\s+carro|auto)", "Cadeirinha"),
+        (r"carrinho\s+(?:de\s+beb[êe]|para\s+beb[êe])|baby\s+stroller|stroller", "Carrinho"),
+        (r"beb[êe]\s+conforto|ber[çc]o\s+auto|car\s+seat", "Bebê Conforto"),
+        (r"cadeirinha\s+(?:para\s+carro|auto)|high\s+chair|cadeira\s+alimenta[çc][ãa]o", "Cadeirinha"),
+        (r"bicicleta\s+(?:de\s+equil[íi]brio|infantil|beb[êe])|balance\s+bike", "Carrinho"),  # baby balance bikes
+    ],
+    ("Bebê", "Fraldas & Lenços"): [
+        (r"\bdiapers?\b|\bfralda\b", "Fralda Descartável"),
+        (r"potty\s+training|pull-?ups|treinamento\s+penico|penico", "Fralda Descartável"),
     ],
     # Wearables
     ("Wearables", "Smartwatch"): [
@@ -161,8 +174,26 @@ KEYWORD_RULES = {
     ],
     ("Brinquedos", "Jogos"): [
         (r"jogo\s+de\s+tabuleiro|boardgame", "Tabuleiro"),
-        (r"jogo\s+de\s+cartas|baralho", "Cartas"),
+        (r"jogo\s+de\s+cartas|baralho|playing\s+cards|poker\s+cards", "Cartas"),
+        (r"\bpokemon\s+(?:cards?|cards|booster|collection|ex|gx|tcg)|pok[ée]mon", "Cartas"),
         (r"fantasia|disfarce", "Fantasias"),
+    ],
+    ("Brinquedos", "Pelúcia"): [
+        (r"\bsquishy\b|squishies|slow\s+rising|mochi", "Personagem"),
+        (r"\bslime\b|\bslimy\b", "Personagem"),
+    ],
+    ("Brinquedos", "Educativo"): [
+        (r"\blápis\s+de\s+cor|lápis|coloring|\bcrayon\b|caneta|\bpencil\b", "Blocos de Montar"),
+        (r"\bballoon\b|bal[ãa]o|bal[õo]es|latex\s+balloon|foil\s+balloon|number\s+balloon|party\s+favors", "Blocos de Montar"),  # group as party/decoration
+    ],
+    ("Brinquedos", "Bonecos"): [
+        (r"\bbicicleta\s+(?:de\s+equil[íi]brio|infantil)|balance\s+bike|\bbike\b", "Carrinho"),
+    ],
+    ("Brinquedos", "Bonecos"): [
+        (r"\bbicicleta\s+(?:de\s+equil[íi]brio|infantil)|balance\s+bike", "Carrinho"),
+    ],
+    ("Brinquedos", "Eletrônicos"): [
+        (r"\bballoon\b|bal[ãa]o|bal[õo]es|latex\s+balloon|foil\s+balloon|number\s+balloon", "Robô"),  # Wrong L3, will fallback
     ],
     # Moda
     ("Moda", "Roupas"): [

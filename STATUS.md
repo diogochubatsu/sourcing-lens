@@ -1,17 +1,33 @@
 # ArbitLens v0.3.0 — Status
 
 ## Data
-- **995 active products** across **19 L1 categories**
-- **432 Amazon BR** | **301 Amazon US** | **262 Mercado Livre** (some duplicates removed in cleanup)
-- **68 matches** (85% avg confidence, more precise L1+L2+L3)
-  - 50 BR↔ML (CLIP embeddings, threshold 70%, 15 L1 categories)
-  - 18 BR↔US (CLIP embeddings, threshold 70%)
+- **997 active products** across **19 L1 categories**
+- **432 Amazon BR** | **301 Amazon US** | **264 Mercado Livre**
+- **130 matches** (80% avg confidence, 3-tier hierarchical matching)
+  - 106 BR↔ML (CLIP embeddings, threshold 70%, 15 L1 categories)
+    - 88 strict (L1+L2+L3) | 3 medium (L1+L2) | 14 broad (L1 only)
+  - 24 BR↔US (CLIP embeddings, threshold 70%)
 
-## Category Taxonomy (v0.3.1)
+## Category Taxonomy (v0.3.2)
 - **3-level hierarchy**: L1 (19) → L2 (76) → L3 (299) — see `scripts/taxonomy.py`
-- **80% of products properly classified** (797/995 with specific L3, rest "Geral")
-- Cleanup: 239 L2=L1 circulars fixed, 187 L3=L1 circulars fixed, 2 NULL L1 fixed
-- New tools: `scripts/categorize_products.py` (keyword classifier), `scripts/cleanup_categories.py` (legacy cleanup)
+- **84.8% of products properly classified** (844/997 with specific L3, 153 still "Geral")
+- Cleanup: 239 L2=L1 + 187 L3=L1 circulars + 2 NULL L1 fixed
+- Classifier (`categorize_products.py`): 60+ keyword rules (PT + EN) covering 16 L1
+- Cleanup tool: `scripts/cleanup_categories.py` (handles legacy L2=L1/L3=L1)
+
+## 3-Tier Matching (v0.3.2)
+- **STRICT** (L1+L2+L3): highest confidence, exact same subcategory — 88 matches
+- **MEDIUM** (L1+L2): same broad group, L3 may be "Geral" — 3 matches
+- **BROAD** (L1 only): fallback when L2/L3 not yet classified — 14 matches
+- Script: `scripts/matching_v7.py` (replaces v6)
+- Net improvement: 50→106 BR↔ML matches (+112%), 18→24 BR↔US (+33%)
+
+## Site Unblocker (SU) — Gentle scraper
+- Decodo SU (U0000434457): forward proxy @ unblock.decodo.com:60000
+- Bypasses both Amazon BR 503 blocks AND ML bot detection
+- Used in `scrape_amazon_bestsellers.py --use-su` for Amazon BR
+- Tested: 1 Amazon BR category (Beauty, 30 products in 5s) and Brinquedos (30 in 27s)
+- Caveat: SSL self-signed, need `ssl._create_unverified_context()`
 
 ## Tools (v0.3.0)
 - **Decodo Scraping API** (U0000420946) — ML best-sellers scraping (JSON REST) ✅
