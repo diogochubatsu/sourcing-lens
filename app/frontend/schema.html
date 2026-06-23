@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>arbt.ly — Bronze Schema</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0f1117; color: #e1e4e8; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; line-height: 1.6; }
+        
+        .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+        
+        .header { text-align: center; padding: 40px 0 32px; border-bottom: 1px solid #21262d; margin-bottom: 40px; }
+        .header h1 { font-size: 28px; font-weight: 700; color: #58a6ff; letter-spacing: -0.5px; }
+        .header .subtitle { color: #8b949e; font-size: 14px; margin-top: 8px; }
+        .header .db-info { display: flex; justify-content: center; gap: 32px; margin-top: 16px; font-size: 13px; }
+        .header .db-info span { color: #8b949e; }
+        .header .db-info strong { color: #58a6ff; }
+        
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #58a6ff; text-decoration: none; font-size: 13px; margin-bottom: 24px; }
+        .back-link:hover { text-decoration: underline; }
+        
+        .table-card { background: #161b22; border: 1px solid #21262d; border-radius: 8px; margin-bottom: 32px; overflow: hidden; }
+        .table-card-header { padding: 16px 20px; background: #1c2128; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .table-card-header h2 { font-size: 16px; font-weight: 600; color: #c9d1d9; }
+        .table-card-header .badge { background: #1f6feb33; color: #58a6ff; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+        .table-card-header .row-count { color: #8b949e; font-size: 12px; margin-left: auto; }
+        .table-card-header .chevron { color: #8b949e; transition: transform 0.2s; }
+        
+        .table-card-body { padding: 0; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        thead th { background: #1c2128; padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #21262d; position: sticky; top: 0; }
+        tbody td { padding: 10px 16px; border-bottom: 1px solid #21262d; vertical-align: top; }
+        tbody tr:hover { background: #1c2128; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .col-name { color: #7ee787; font-weight: 500; white-space: nowrap; }
+        .col-type { color: #d2a8ff; white-space: nowrap; }
+        .col-pk { color: #f0883e; font-size: 10px; font-weight: 600; }
+        .col-notnull { color: #f85149; font-size: 10px; }
+        .col-default { color: #8b949e; font-size: 11px; }
+        .col-desc { color: #c9d1d9; }
+        .col-example { color: #79c0ff; font-size: 11px; font-style: italic; }
+        
+        .index-list { padding: 12px 16px; background: #1c2128; border-top: 1px solid #21262d; font-size: 12px; }
+        .index-list span { color: #8b949e; }
+        .idx-name { color: #d2a8ff; }
+        .idx-cols { color: #7ee787; }
+        .idx-unique { color: #f0883e; font-size: 10px; font-weight: 600; }
+        .idx-partial { color: #8b949e; font-size: 11px; font-style: italic; }
+        
+        .relationship { display: flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 12px; color: #8b949e; }
+        .relationship .arrow { color: #58a6ff; }
+        .relationship .ref-table { color: #d2a8ff; }
+        .relationship .ref-col { color: #7ee787; }
+        
+        .section-title { font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262d; }
+        
+        .type-legend { display: flex; flex-wrap: wrap; gap: 16px; padding: 16px 0; margin-bottom: 24px; }
+        .type-legend .item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+        .type-legend .swatch { width: 12px; height: 12px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Dashboard</a>
+        
+        <div class="header">
+            <h1>📐 Bronze Schema</h1>
+            <p class="subtitle">Database structure for ArbitLens product intelligence</p>
+            <div class="db-info">
+                <span>Database: <strong>arbtbr</strong></span>
+                <span>Engine: <strong>PostgreSQL + pgvector</strong></span>
+                <span id="total-products">Products: <strong>—</strong></span>
+                <span id="total-matches">Matches: <strong>—</strong></span>
+            </div>
+        </div>
+
+        <div class="type-legend">
+            <div class="item"><div class="swatch" style="background:#7ee787;"></div> Column name</div>
+            <div class="item"><div class="swatch" style="background:#d2a8ff;"></div> Data type</div>
+            <div class="item"><div class="swatch" style="background:#f0883e;"></div> Primary key / unique</div>
+            <div class="item"><div class="swatch" style="background:#f85149;"></div> NOT NULL</div>
+            <div class="item"><div class="swatch" style="background:#79c0ff;"></div> Example value</div>
+        </div>
+
+        <!-- ─── PRODUCTS ─── -->
+        <div class="table-card" id="products-card">
+            <div class="table-card-header" onclick="toggleCard('products')">
+                <h2>📦 products</h2>
+                <span class="badge">PRIMARY TABLE</span>
+                <span class="row-count" id="products-count">— rows</span>
+                <span class="chevron" id="products-chevron">▾</span>
+            </div>
+            <div class="table-card-body" id="products-body">
+                <table>
+                    <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th><th>Example</th></tr></thead>
+                    <tbody>
+                        <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span> <span class="col-notnull">NOT NULL</span></td><td class="col-desc">Auto-increment primary key</td><td class="col-example">1, 2, 3…</td></tr>
+                        <tr><td class="col-name">platform</td><td class="col-type">varchar(50)</td><td><span class="col-notnull">NOT NULL</span></td><td class="col-desc">Marketplace source identifier</td><td class="col-example">amazon_br, amazon_us, ml</td></tr>
+                        <tr><td class="col-name">platform_id</td><td class="col-type">varchar(100)</td><td><span class="col-notnull">NOT NULL</span></td><td class="col-desc">Product ID on the source platform (ASIN for Amazon, MLB for ML)</td><td class="col-example">B0CFYR1VHK, MLB53979422</td></tr>
+                        <tr><td class="col-name">title</td><td class="col-type">text</td><td>NULL</td><td class="col-desc">Full product title as listed on the marketplace</td><td class="col-example">"Kit 6 Pares Meias Puma Cano Médio"</td></tr>
+                        <tr><td class="col-name">price</td><td class="col-type">numeric(10,2)</td><td>NULL</td><td class="col-desc">Current listed price in product's native currency</td><td class="col-example">69.99</td></tr>
+                        <tr><td class="col-name">currency</td><td class="col-type">varchar(10)</td><td>NULL</td><td class="col-desc">ISO currency code</td><td class="col-example">BRL, USD</td></tr>
+                        <tr><td class="col-name">url</td><td class="col-type">text</td><td>NULL</td><td class="col-desc">Direct link to product page on the marketplace</td><td class="col-example">https://www.amazon.com.br/dp/B0CFYR1VHK</td></tr>
+                        <tr><td class="col-name">image_urls</td><td class="col-type">text[]</td><td>NULL</td><td class="col-desc">Array of image URLs for the product</td><td class="col-example">["https://...jpg"]</td></tr>
+                        <tr><td class="col-name">sales_30d</td><td class="col-type">integer</td><td class="col-default">default 0</td><td class="col-desc">Estimated monthly sales volume (computed from "bought in past month" or BSR rank)</td><td class="col-example">410000</td></tr>
+                        <tr><td class="col-name">sales_30d_text</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Raw sales text scraped from the listing</td><td class="col-example">"5K+ bought in past month"</td></tr>
+                        <tr><td class="col-name">review_count</td><td class="col-type">integer</td><td class="col-default">default 0</td><td class="col-desc">Total number of customer reviews</td><td class="col-example">1244</td></tr>
+                        <tr><td class="col-name">review_avg</td><td class="col-type">numeric(3,1)</td><td>NULL</td><td class="col-desc">Average customer rating (1.0 to 5.0)</td><td class="col-example">4.5</td></tr>
+                        <tr><td class="col-name">bsr_rank</td><td class="col-type">integer</td><td>NULL</td><td class="col-desc">Best Sellers Rank within its category (lower = better)</td><td class="col-example">1, 42, 1500</td></tr>
+                        <tr><td class="col-name">category</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Legacy single-level category label (deprecated, use l1/l2/l3)</td><td class="col-example">"microfone"</td></tr>
+                        <tr><td class="col-name">category_l1</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">Taxonomy level 1 — top-level department</td><td class="col-example">Audio, Moda Intima, Casa</td></tr>
+                        <tr><td class="col-name">category_l2</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">Taxonomy level 2 — product group within L1</td><td class="col-example">Microfones, Calcinhas, Caixas de Som</td></tr>
+                        <tr><td class="col-name">category_l3</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">Taxonomy level 3 — specific product type</td><td class="col-example">Lapela Sem Fio, Fio Dental, Portátil</td></tr>
+                        <tr><td class="col-name">image_hash</td><td class="col-type">varchar(64)</td><td>NULL</td><td class="col-desc">SHA256 hash of the product image for dedup and cross-platform matching</td><td class="col-example">f8f887e49113c41f</td></tr>
+                        <tr><td class="col-name">supplier_name</td><td class="col-type">varchar(200)</td><td>NULL</td><td class="col-desc">Brand or supplier name (when available)</td><td class="col-example">"Puma", "Genérica"</td></tr>
+                        <tr><td class="col-name">raw_data</td><td class="col-type">jsonb</td><td>NULL</td><td class="col-desc">Original scraped JSON blob — preserves all source fields for future use</td><td class="col-example">{"source": "bestsellers_scraper"}</td></tr>
+                        <tr><td class="col-name">embedding</td><td class="col-type">vector(768)</td><td>NULL</td><td class="col-desc">CLIP ViT-B/32 image embedding for cosine similarity matching across platforms</td><td class="col-example">[-0.015, 0.021, …] (768 dims)</td></tr>
+                        <tr><td class="col-name">is_active</td><td class="col-type">boolean</td><td class="col-default">default true</td><td class="col-desc">Soft-delete flag — false means product is archived</td><td class="col-example">true</td></tr>
+                        <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Row creation timestamp</td><td class="col-example">2026-06-08T15:40:20</td></tr>
+                        <tr><td class="col-name">last_updated</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Last modification timestamp</td><td class="col-example">2026-06-23T01:16:57</td></tr>
+                    </tbody>
+                </table>
+                <div class="index-list">
+                    <strong>Indexes:</strong>
+                    <span class="idx-name">products_platform_platform_id_key</span> <span class="idx-unique">UNIQUE</span> (platform, platform_id) ·
+                    <span class="idx-name">idx_products_active_l1l2l3</span> (is_active, category_l1, category_l2, category_l3) ·
+                    <span class="idx-name">idx_products_active_sales</span> <span class="idx-partial">WHERE is_active = true</span> (sales_30d DESC) ·
+                    <span class="idx-name">idx_products_image_hash</span> <span class="idx-partial">WHERE image_hash IS NOT NULL</span> (image_hash) ·
+                    <span class="idx-name">idx_products_active_platform</span> <span class="idx-partial">WHERE is_active = true</span> (platform)
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── MATCHES ─── -->
+        <div class="table-card" id="matches-card">
+            <div class="table-card-header" onclick="toggleCard('matches')">
+                <h2>🔗 matches</h2>
+                <span class="badge" style="background:#23863633; color:#3fb950;">CORE</span>
+                <span class="row-count" id="matches-count">— rows</span>
+                <span class="chevron" id="matches-chevron">▾</span>
+            </div>
+            <div class="table-card-body" id="matches-body" style="display:none;">
+                <table>
+                    <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span> <span class="col-notnull">NOT NULL</span></td><td class="col-desc">Auto-increment primary key</td></tr>
+                        <tr><td class="col-name">product_a_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">First product in the match pair (typically higher-seller)</td></tr>
+                        <tr><td class="col-name">product_b_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">Second product in the match pair (typically lower-seller)</td></tr>
+                        <tr><td class="col-name">match_score</td><td class="col-type">numeric(5,4)</td><td>NULL</td><td class="col-desc">Confidence score 0.0–1.0 from CLIP cosine similarity + title matching</td></tr>
+                        <tr><td class="col-name">match_type</td><td class="col-type">varchar(20)</td><td>NULL</td><td class="col-desc">How the match was found: image, title, combined, manual</td></tr>
+                        <tr><td class="col-name">margin_pct</td><td class="col-type">numeric(6,2)</td><td>NULL</td><td class="col-desc">Estimated profit margin percentage (selling price − cost) / cost × 100</td></tr>
+                        <tr><td class="col-name">confidence</td><td class="col-type">numeric(3,2)</td><td>NULL</td><td class="col-desc">Business confidence tier: 0.90 = high, 0.70 = medium, 0.50 = low</td></tr>
+                        <tr><td class="col-name">is_active</td><td class="col-type">boolean</td><td class="col-default">default true</td><td class="col-desc">Soft-delete flag</td></tr>
+                        <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Row creation timestamp</td></tr>
+                        <tr><td class="col-name">last_updated</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Last modification timestamp</td></tr>
+                    </tbody>
+                </table>
+                <div class="relationship"><span class="arrow">→</span> references <span class="ref-table">products</span>(<span class="ref-col">id</span>) via product_a_id and product_b_id</div>
+            </div>
+        </div>
+
+        <!-- ─── PRICE HISTORY ─── -->
+        <div class="table-card" id="price-history-card">
+            <div class="table-card-header" onclick="toggleCard('price-history')">
+                <h2>📈 price_history</h2>
+                <span class="badge" style="background:#da363433; color:#f85149;">TRACKING</span>
+                <span class="row-count">—</span>
+                <span class="chevron" id="price-history-chevron">▸</span>
+            </div>
+            <div class="table-card-body" id="price-history-body" style="display:none;">
+                <table>
+                    <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span></td><td class="col-desc">Auto-increment primary key</td></tr>
+                        <tr><td class="col-name">product_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">Reference to the product being tracked</td></tr>
+                        <tr><td class="col-name">price</td><td class="col-type">numeric(10,2)</td><td>NULL</td><td class="col-desc">Recorded price at this point in time</td></tr>
+                        <tr><td class="col-name">recorded_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">When this price snapshot was taken</td></tr>
+                    </tbody>
+                </table>
+                <div class="relationship"><span class="arrow">→</span> references <span class="ref-table">products</span>(<span class="ref-col">id</span>)</div>
+            </div>
+        </div>
+
+        <!-- ─── ALERTS ─── -->
+        <div class="table-card" id="alerts-card">
+            <div class="table-card-header" onclick="toggleCard('alerts')">
+                <h2>🔔 alerts</h2>
+                <span class="badge" style="background:#d2992233; color:#d29922;">SYSTEM</span>
+                <span class="row-count">—</span>
+                <span class="chevron" id="alerts-chevron">▸</span>
+            </div>
+            <div class="table-card-body" id="alerts-body" style="display:none;">
+                <table>
+                    <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span></td><td class="col-desc">Auto-increment primary key</td></tr>
+                        <tr><td class="col-name">product_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">Product that triggered the alert</td></tr>
+                        <tr><td class="col-name">alert_type</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Type of alert: price_drop, new_match, stock_change</td></tr>
+                        <tr><td class="col-name">message</td><td class="col-type">text</td><td>NULL</td><td class="col-desc">Human-readable alert description</td></tr>
+                        <tr><td class="col-name">is_read</td><td class="col-type">boolean</td><td class="col-default">default false</td><td class="col-desc">Whether the user has seen this alert</td></tr>
+                        <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Alert creation timestamp</td></tr>
+                    </tbody>
+                </table>
+                <div class="relationship"><span class="arrow">→</span> references <span class="ref-table">products</span>(<span class="ref-col">id</span>)</div>
+            </div>
+        </div>
+
+        <!-- ─── FAVORITES ─── -->
+        <div class="table-card" id="favorites-card">
+            <div class="table-card-header" onclick="toggleCard('favorites')">
+                <h2>⭐ favorites</h2>
+                <span class="badge" style="background:#a371f733; color:#a371f7;">USER</span>
+                <span class="row-count">—</span>
+                <span class="chevron" id="favorites-chevron">▸</span>
+            </div>
+            <div class="table-card-body" id="favorites-body" style="display:none;">
+                <table>
+                    <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span></td><td class="col-desc">Auto-increment primary key</td></tr>
+                        <tr><td class="col-name">product_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">Bookmarked product</td></tr>
+                        <tr><td class="col-name">user_id</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">User identifier (for multi-user support)</td></tr>
+                        <tr><td class="col-name">notes</td><td class="col-type">text</td><td>NULL</td><td class="col-desc">User's personal notes about this product</td></tr>
+                        <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">When the product was favorited</td></tr>
+                    </tbody>
+                </table>
+                <div class="relationship"><span class="arrow">→</span> references <span class="ref-table">products</span>(<span class="ref-col">id</span>)</div>
+            </div>
+        </div>
+
+        <!-- ─── CUSTOM ALERTS ─── -->
+        <div class="table-card" id="custom-alerts-card">
+            <div class="table-card-header" onclick="toggleCard('custom-alerts')">
+                <h2>🚨 custom_alerts</h2>
+                <span class="badge" style="background:#a371f733; color:#a371f7;">USER</span>
+                <span class="row-count">—</span>
+                <span class="chevron" id="custom-alerts-chevron">▸</span>
+            </div>
+            <div class="table-card-body" id="custom-alerts-body" style="display:none;">
+                <table>
+                    <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span></td><td class="col-desc">Auto-increment primary key</td></tr>
+                        <tr><td class="col-name">product_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">Product to monitor</td></tr>
+                        <tr><td class="col-name">user_id</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">User who set the alert</td></tr>
+                        <tr><td class="col-name">condition_type</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Trigger condition: price_below, price_above, back_in_stock</td></tr>
+                        <tr><td class="col-name">threshold</td><td class="col-type">numeric(10,2)</td><td>NULL</td><td class="col-desc">Numeric threshold for the condition</td></tr>
+                        <tr><td class="col-name">is_active</td><td class="col-type">boolean</td><td class="col-default">default true</td><td class="col-desc">Whether this alert is still armed</td></tr>
+                        <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Alert creation timestamp</td></tr>
+                    </tbody>
+                </table>
+                <div class="relationship"><span class="arrow">→</span> references <span class="ref-table">products</span>(<span class="ref-col">id</span>)</div>
+            </div>
+        </div>
+
+        <!-- ─── ENTITY RELATIONSHIP ─── -->
+        <div class="section-title">Entity Relationships</div>
+        <div style="background:#161b22; border:1px solid #21262d; border-radius:8px; padding:24px; font-size:13px; line-height:2; margin-bottom:32px;">
+            <code style="color:#7ee787;">products</code>
+            <span style="color:#8b949e;">  ←</span>
+            <code style="color:#d2a8ff;">matches.product_a_id</code> /
+            <code style="color:#d2a8ff;">matches.product_b_id</code>
+            <span style="color:#8b949e;">  (1:N)</span><br>
+            <code style="color:#7ee787;">products</code>
+            <span style="color:#8b949e;">  ←</span>
+            <code style="color:#d2a8ff;">price_history.product_id</code>
+            <span style="color:#8b949e;">  (1:N)</span><br>
+            <code style="color:#7ee787;">products</code>
+            <span style="color:#8b949e;">  ←</span>
+            <code style="color:#d2a8ff;">alerts.product_id</code>
+            <span style="color:#8b949e;">  (1:N)</span><br>
+            <code style="color:#7ee787;">products</code>
+            <span style="color:#8b949e;">  ←</span>
+            <code style="color:#d2a8ff;">favorites.product_id</code>
+            <span style="color:#8b949e;">  (1:N)</span><br>
+            <code style="color:#7ee787;">products</code>
+            <span style="color:#8b949e;">  ←</span>
+            <code style="color:#d2a8ff;">custom_alerts.product_id</code>
+            <span style="color:#8b949e;">  (1:N)</span>
+        </div>
+
+        <div class="section-title">Architecture Notes</div>
+        <div style="background:#161b22; border:1px solid #21262d; border-radius:8px; padding:20px; font-size:13px; color:#8b949e; line-height:1.8;">
+            <p><strong style="color:#58a6ff;">Bronze layer:</strong> Raw scraped data with minimal transformation. Prices, sales, and categories are normalized but not enriched.</p>
+            <p style="margin-top:12px;"><strong style="color:#58a6ff;">Cross-platform matching:</strong> Products are matched via CLIP image embeddings (vector cosine similarity at ≥0.70 threshold) + title keyword overlap. Matches are 1-to-1 deduped.</p>
+            <p style="margin-top:12px;"><strong style="color:#58a6ff;">Taxonomy:</strong> 3-level hierarchy (L1/L2/L3) is assigned via pattern-matching on titles against a curated taxonomy tree. L1 = department, L2 = group, L3 = type.</p>
+            <p style="margin-top:12px;"><strong style="color:#58a6ff;">Sales estimation:</strong> Amazon "bought in past month" text is parsed (5K+ → 5000). ML sales come from listing metadata. Amazon US uses BSR-based estimation when direct sales are unavailable.</p>
+            <p style="margin-top:12px;"><strong style="color:#58a6ff;">Soft delete:</strong> <code style="color:#7ee787;">is_active = false</code> archives products without removing data. All active queries filter on <code style="color:#7ee787;">is_active = TRUE</code>.</p>
+        </div>
+
+        <p style="text-align:center; color:#484f58; font-size:12px; margin-top:40px; padding-bottom:24px;">
+            arbt.ly — See the arbitrage. Before everyone else.
+        </p>
+    </div>
+
+    <script>
+        function toggleCard(name) {
+            var body = document.getElementById(name + '-body');
+            var chevron = document.getElementById(name + '-chevron');
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                chevron.textContent = '▾';
+            } else {
+                body.style.display = 'none';
+                chevron.textContent = '▸';
+            }
+        }
+
+        // Load row counts
+        async function loadCounts() {
+            try {
+                var res = await fetch('/api/stats');
+                var stats = await res.json();
+                document.getElementById('products-count').textContent = (stats.total_products || 0).toLocaleString() + ' rows';
+                document.getElementById('total-products').innerHTML = 'Products: <strong>' + (stats.total_products || 0).toLocaleString() + '</strong>';
+                document.getElementById('total-matches').innerHTML = 'Matches: <strong>' + (stats.total_matches || 0).toLocaleString() + '</strong>';
+            } catch(e) {
+                console.error('Failed to load stats', e);
+            }
+            try {
+                var res2 = await fetch('/api/matches?limit=1');
+                var data = await res2.json();
+                document.getElementById('matches-count').textContent = (data.count || 0).toLocaleString() + ' rows';
+            } catch(e) {}
+        }
+        loadCounts();
+    </script>
+</body>
+</html>

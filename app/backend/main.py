@@ -157,6 +157,14 @@ def get_price_drops(limit: int = 5):
 def serve_frontend():
     return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html"))
 
+@app.get("/schema")
+def serve_schema():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "schema.html"))
+
+@app.get("/schema")
+def serve_schema():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "schema.html"))
+
 frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend")
 if os.path.exists(frontend_dir):
     app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
