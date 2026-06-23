@@ -496,6 +496,24 @@
             <h1>arbt.ly</h1>
             <div class="subtitle">Market Intelligence Dashboard</div>
             <div class="meta">Cross-platform product matching across Amazon BR, Amazon US & Mercado Livre</div>
+            <div id="overview-bar" style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;">
+                <div class="stat" style="background:#f3f4f6;padding:8px 16px;border-radius:8px;">
+                    <div class="num" id="ob-products" style="font-size:24px;font-weight:600;color:#1a1a1a;">...</div>
+                    <div class="label" style="font-size:11px;color:#666;">PRODUCTS</div>
+                </div>
+                <div class="stat" style="background:#f3f4f6;padding:8px 16px;border-radius:8px;">
+                    <div class="num" id="ob-matches" style="font-size:24px;font-weight:600;color:#16a34a;">...</div>
+                    <div class="label" style="font-size:11px;color:#666;">MATCHES</div>
+                </div>
+                <div class="stat" style="background:#f3f4f6;padding:8px 16px;border-radius:8px;">
+                    <div class="num" id="ob-categories" style="font-size:24px;font-weight:600;color:#2563eb;">...</div>
+                    <div class="label" style="font-size:11px;color:#666;">CATEGORIES</div>
+                </div>
+                <div class="stat" style="background:#f3f4f6;padding:8px 16px;border-radius:8px;">
+                    <div class="num" id="ob-platforms" style="font-size:24px;font-weight:600;color:#ea580c;">...</div>
+                    <div class="label" style="font-size:11px;color:#666;">PLATFORMS</div>
+                </div>
+            </div>
         </div>
 
         <!-- Search Bar -->
@@ -519,9 +537,14 @@
             </div>
         </div>
         
-        <div style="text-align:right; margin-bottom:16px;"><button onclick="showLoginForm()" style="background:#1a1a1a; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:13px;">👤 Login / Register</button></div>
+        <div style="text-align:right; margin-bottom:16px;display:flex;justify-content:flex-end;gap:8px;">
+            <a href="/docs" target="_blank" style="background:#16a34a; color:#fff; text-decoration:none; padding:8px 16px; border-radius:4px; font-size:13px;">📋 API Docs (Swagger)</a>
+            <a href="/openapi.json" target="_blank" style="background:#2563eb; color:#fff; text-decoration:none; padding:8px 16px; border-radius:4px; font-size:13px;">🔌 OpenAPI JSON</a>
+            <button onclick="showLoginForm()" style="background:#1a1a1a; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:13px;">👤 Login / Register</button>
+        </div>
         <div class="tabs">
-            <button class="tab active" onclick="filterCategory('Audio', this)">🎤 Audio</button>
+            <button class="tab active" onclick="filterCategory('all', this)" style="background:#2563eb;color:#fff;border-color:#2563eb;">🌐 All</button>
+            <button class="tab" onclick="filterCategory('Audio', this)">🎤 Audio</button>
             <button class="tab" onclick="filterCategory('Casa', this)">🏠 Casa</button>
             <button class="tab" onclick="filterCategory('Ferramentas', this)">🔧 Ferramentas</button>
             <button class="tab" onclick="filterCategory('Esportes', this)">⚽ Esportes</button>
@@ -732,7 +755,7 @@
         }
 
         function filterByCategory(category) {
-            window.currentCategory = category || 'Audio';
+            window.currentCategory = category || 'all';
             renderCurrentCategory();
         }
 
@@ -829,11 +852,11 @@
         }
 
         function renderCurrentCategory() {
-            var category = window.currentCategory || 'microfone';
+            var category = window.currentCategory || 'all';
             var products = window.allProducts || [];
             var matches = window.allMatches || [];
             
-            var filtered = products.filter(function(p) { return p.category_l1 === category; });
+            var filtered = category === 'all' ? products : products.filter(function(p) { return p.category_l1 === category; });
             
             var amazon = filtered.filter(function(p) { return p.platform === 'amazon_br'; }).sort(function(a, b) { return (b.sales_30d || 0) - (a.sales_30d || 0); });
             var amazon_us = filtered.filter(function(p) { return p.platform === 'amazon_us'; }).sort(function(a, b) { return (b.sales_30d || 0) - (a.sales_30d || 0); });
@@ -861,7 +884,8 @@
             renderMLTable(ml);
             
             // Matches
-            var catMatches = matches.filter(function(m) { return m.category_l1 === category; });
+            var catMatches = category === 'all' ? matches : matches.filter(function(m) { return m.category_l1 === category; });
+            catMatches = catMatches.slice(0, 30);
             renderMatches(catMatches, matches.length, products);
         }
         
@@ -909,7 +933,7 @@
                 var totalMargin = 0;
                 var marginCount = 0;
                 matches.forEach(function(m) {
-                    if (m.category) categories[m.category] = true;
+                    if (m.category_l1) categories[m.category_l1] = true;
                     if (m.margin_percent !== undefined && m.margin_percent !== null) {
                         totalMargin += m.margin_percent;
                         marginCount++;
@@ -1219,7 +1243,29 @@
             document.getElementById('matches-container').innerHTML = '<div style="text-align:center;padding:40px;background:#fff;border-radius:12px;border:1px solid #eee;color:#999;font-size:14px;">Loading data...</div>';
             
             await Promise.all([loadData(), loadMatches()]);
-            window.currentCategory = 'Audio';  // default category
+            window.currentCategory = 'all';
+            
+            // Populate overview banner
+            (async function() {
+                try {
+                    var statsR = await fetch('/api/stats');
+                    var stats = await statsR.json();
+                    document.getElementById('ob-products').textContent = stats.total_products;
+                    document.getElementById('ob-matches').textContent = (statsR.ok) ? '...' : '?';
+                    // Get matches count (use full count)
+                    var mr = await fetch('/api/matches?limit=500');
+                    var md = await mr.json();
+                    document.getElementById('ob-matches').textContent = md.count || md.matches?.length || '?';
+                    // Get categories count
+                    var cr = await fetch('/api/categories');
+                    var cd = await cr.json();
+                    var l1cats = new Set();
+                    (cd.categories || []).forEach(function(c) { if (c.category_l1) l1cats.add(c.category_l1); });
+                    document.getElementById('ob-categories').textContent = l1cats.size;
+                    // Platforms
+                    document.getElementById('ob-platforms').textContent = (stats.by_platform || []).length;
+                } catch(e) { console.error('Overview load error:', e); }
+            })();  // default: show everything
             renderCurrentCategory();
         }
         
