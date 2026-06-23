@@ -1,3 +1,4 @@
+/usr/bin/bash: warning: setlocale: LC_ALL: cannot change locale (pt_BR.UTF-8)
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -527,14 +528,22 @@
             <div id="search-results" style="display:none;margin-top:12px;background:#fff;border-radius:12px;border:1px solid #eee;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);"></div>
         </div>
 
-        <!-- Category Browser -->
+        <!-- Hierarchical Category Browser -->
         <div style="margin-bottom:24px;">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
                 <span style="font-size:13px;color:#666;font-weight:600;">Browse by Category:</span>
-                <select id="category-select" onchange="filterByCategory(this.value)" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-                    <option value="">All Categories</option>
+                <select id="cat-l1" onchange="onL1Change()" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;min-width:160px;">
+                    <option value="">All L1 Categories</option>
                 </select>
+                <select id="cat-l2" onchange="onL2Change()" disabled style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;min-width:160px;">
+                    <option value="">All Subcategories</option>
+                </select>
+                <select id="cat-l3" onchange="onL3Change()" disabled style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;min-width:160px;">
+                    <option value="">All Types</option>
+                </select>
+                <button onclick="clearCategoryFilter()" style="padding:8px 12px;background:#f3f4f6;border:1px solid #ddd;border-radius:6px;font-size:12px;cursor:pointer;color:#666;">✕ Clear</button>
             </div>
+            <div id="breadcrumb" style="font-size:12px;color:#999;margin-top:4px;"></div>
         </div>
         
         <div style="text-align:right; margin-bottom:16px;display:flex;justify-content:flex-end;gap:8px;">
@@ -734,30 +743,171 @@
         }
 
         // Category browser
+        // Hierarchical category tree
+        window.catTree = {};
+        window.catCounts = {};
+        
         async function loadCategories() {
             try {
                 var resp = await fetch('/api/categories');
                 var data = await resp.json();
                 var categories = data.categories || [];
                 
-                var select = document.getElementById('category-select');
+                // Build tree: L1 -> L2 -> L3
+                var tree = {};
+                var l1Counts = {};
+                var l2Counts = {};
+                var l3Counts = {};
+                
                 categories.forEach(function(c) {
-                    if (c.category_l1) {
-                        var option = document.createElement('option');
-                        option.value = c.category_l1;
-                        option.textContent = c.category_l1 + ' (' + c.product_count + ')';
-                        select.appendChild(option);
+                    var l1 = c.category_l1 || '';
+                    var l2 = c.category_l2 || '';
+                    var l3 = c.category_l3 || '';
+                    var count = c.product_count || 0;
+                    
+                    if (!l1) return;
+                    if (!l1Counts[l1]) l1Counts[l1] = 0;
+                    l1Counts[l1] += count;
+                    
+                    if (!tree[l1]) tree[l1] = {};
+                    if (l2) {
+                        if (!tree[l1][l2]) tree[l1][l2] = [];
+                        if (!l2Counts[l1 + '|' + l2]) l2Counts[l1 + '|' + l2] = 0;
+                        l2Counts[l1 + '|' + l2] += count;
+                        
+                        if (l3) {
+                            tree[l1][l2].push(l3);
+                            if (!l3Counts[l1 + '|' + l2 + '|' + l3]) l3Counts[l1 + '|' + l2 + '|' + l3] = 0;
+                            l3Counts[l1 + '|' + l2 + '|' + l3] += count;
+                        }
                     }
+                });
+                
+                window.catTree = tree;
+                window.catCounts = {l1: l1Counts, l2: l2Counts, l3: l3Counts};
+                
+                // Populate L1 dropdown
+                var sel = document.getElementById('cat-l1');
+                var sortedL1 = Object.keys(l1Counts).sort();
+                sortedL1.forEach(function(l1) {
+                    var opt = document.createElement('option');
+                    opt.value = l1;
+                    opt.textContent = l1 + ' (' + l1Counts[l1] + ')';
+                    sel.appendChild(opt);
                 });
             } catch(e) {
                 console.error('Error loading categories:', e);
             }
         }
-
-        function filterByCategory(category) {
-            window.currentCategory = category || 'all';
+        
+        function onL1Change() {
+            var l1 = document.getElementById('cat-l1').value;
+            var l2Sel = document.getElementById('cat-l2');
+            var l3Sel = document.getElementById('cat-l3');
+            
+            // Reset L2 and L3
+            l2Sel.innerHTML = '<option value="">All Subcategories</option>';
+            l3Sel.innerHTML = '<option value="">All Types</option>';
+            l2Sel.disabled = true;
+            l2Sel.style.opacity = '0.5';
+            l3Sel.disabled = true;
+            l3Sel.style.opacity = '0.5';
+            
+            if (!l1) {
+                window.currentCategory = 'all';
+            window.currentL2 = '';
+            window.currentL3 = '';
+                window.currentL2 = '';
+                window.currentL3 = '';
+                updateBreadcrumb();
+                renderCurrentCategory();
+                return;
+            }
+            
+            // Populate L2
+            var l2s = Object.keys(window.catTree[l1] || {}).sort();
+            l2s.forEach(function(l2) {
+                var opt = document.createElement('option');
+                opt.value = l2;
+                var key = l1 + '|' + l2;
+                opt.textContent = l2 + ' (' + (window.catCounts.l2[key] || 0) + ')';
+                l2Sel.appendChild(opt);
+            });
+            l2Sel.disabled = false;
+            l2Sel.style.opacity = '1';
+            
+            window.currentCategory = l1;
+            window.currentL2 = '';
+            window.currentL3 = '';
+            updateBreadcrumb();
             renderCurrentCategory();
         }
+        
+        function onL2Change() {
+            var l1 = document.getElementById('cat-l1').value;
+            var l2 = document.getElementById('cat-l2').value;
+            var l3Sel = document.getElementById('cat-l3');
+            
+            l3Sel.innerHTML = '<option value="">All Types</option>';
+            l3Sel.disabled = true;
+            l3Sel.style.opacity = '0.5';
+            
+            if (!l2) {
+                window.currentL2 = '';
+                window.currentL3 = '';
+                updateBreadcrumb();
+                renderCurrentCategory();
+                return;
+            }
+            
+            // Populate L3
+            var l3s = (window.catTree[l1] && window.catTree[l1][l2]) || [];
+            l3s.sort().forEach(function(l3) {
+                var opt = document.createElement('option');
+                opt.value = l3;
+                var key = l1 + '|' + l2 + '|' + l3;
+                opt.textContent = l3 + ' (' + (window.catCounts.l3[key] || 0) + ')';
+                l3Sel.appendChild(opt);
+            });
+            l3Sel.disabled = false;
+            l3Sel.style.opacity = '1';
+            
+            window.currentL2 = l2;
+            window.currentL3 = '';
+            updateBreadcrumb();
+            renderCurrentCategory();
+        }
+        
+        function onL3Change() {
+            window.currentL3 = document.getElementById('cat-l3').value;
+            updateBreadcrumb();
+            renderCurrentCategory();
+        }
+        
+        function clearCategoryFilter() {
+            document.getElementById('cat-l1').value = '';
+            document.getElementById('cat-l2').value = '';
+            document.getElementById('cat-l3').value = '';
+            document.getElementById('cat-l2').disabled = true;
+            document.getElementById('cat-l2').style.opacity = '0.5';
+            document.getElementById('cat-l3').disabled = true;
+            document.getElementById('cat-l3').style.opacity = '0.5';
+            window.currentCategory = 'all';
+            window.currentL2 = '';
+            window.currentL3 = '';
+            updateBreadcrumb();
+            renderCurrentCategory();
+        }
+        
+        function updateBreadcrumb() {
+            var el = document.getElementById('breadcrumb');
+            var parts = [];
+            if (window.currentCategory && window.currentCategory !== 'all') parts.push(window.currentCategory);
+            if (window.currentL2) parts.push(window.currentL2);
+            if (window.currentL3) parts.push(window.currentL3);
+            el.textContent = parts.length ? '📂 ' + parts.join(' → ') : '📂 All categories';
+        }
+
 
         // Initialize categories on load
         document.addEventListener('DOMContentLoaded', function() {
@@ -856,7 +1006,18 @@
             var products = window.allProducts || [];
             var matches = window.allMatches || [];
             
-            var filtered = category === 'all' ? products : products.filter(function(p) { return p.category_l1 === category; });
+            var l2 = window.currentL2 || '';
+            var l3 = window.currentL3 || '';
+            var filtered;
+            if (category === 'all') {
+                filtered = products;
+            } else if (l3) {
+                filtered = products.filter(function(p) { return p.category_l1 === category && p.category_l2 === l2 && p.category_l3 === l3; });
+            } else if (l2) {
+                filtered = products.filter(function(p) { return p.category_l1 === category && p.category_l2 === l2; });
+            } else {
+                filtered = products.filter(function(p) { return p.category_l1 === category; });
+            }
             
             var amazon = filtered.filter(function(p) { return p.platform === 'amazon_br'; }).sort(function(a, b) { return (b.sales_30d || 0) - (a.sales_30d || 0); });
             var amazon_us = filtered.filter(function(p) { return p.platform === 'amazon_us'; }).sort(function(a, b) { return (b.sales_30d || 0) - (a.sales_30d || 0); });
@@ -884,7 +1045,16 @@
             renderMLTable(ml);
             
             // Matches
-            var catMatches = category === 'all' ? matches : matches.filter(function(m) { return m.category_l1 === category; });
+            var catMatches;
+            if (category === 'all') {
+                catMatches = matches;
+            } else if (l3) {
+                catMatches = matches.filter(function(m) { return m.category_l1 === category && m.category_l2 === l2 && m.category_l3 === l3; });
+            } else if (l2) {
+                catMatches = matches.filter(function(m) { return m.category_l1 === category && m.category_l2 === l2; });
+            } else {
+                catMatches = matches.filter(function(m) { return m.category_l1 === category; });
+            }
             catMatches = catMatches.slice(0, 30);
             renderMatches(catMatches, matches.length, products);
         }
