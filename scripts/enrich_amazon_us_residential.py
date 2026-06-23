@@ -200,7 +200,7 @@ def main():
             success += 1
             if not args.dry_run:
                 cur.execute(
-                    "UPDATE products SET sales_30d = %s, sales_30d_text = %s, last_updated = NOW() WHERE id = %s",
+                    "UPDATE products SET sales_30d = %s, last_updated = NOW() WHERE id = %s",
                     (sales, f"~{sales}/month", prod["id"]),
                 )
                 conn.commit()

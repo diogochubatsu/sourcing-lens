@@ -553,12 +553,12 @@
         </div>
         
         <!-- SCHEMA SECTION -->
-        <div id="schema-toggle" onclick="document.getElementById('schema-content').style.display=document.getElementById('schema-content').style.display==='none'?'block':'none';" style="cursor:pointer; padding:12px 16px; background:#f8f9fa; border:1px solid #e5e7eb; border-radius:8px; margin-bottom:16px; display:flex; align-items:center; gap:8px; font-size:13px; color:#374151; font-weight:600;">
-            📐 <span>Schema: products (Bronze)</span> <span style="margin-left:auto; color:#9ca3af;">▾</span>
+        <div id="schema-toggle" onclick="document.getElementById('schema-content').style.display=document.getElementById('schema-content').style.display===\"none\"?\"block\":\"none\";" style="cursor:pointer; padding:12px 16px; background:#f8f9fa; border:1px solid #e5e7eb; border-radius:8px; margin-bottom:16px; display:flex; align-items:center; gap:8px; font-size:13px; color:#374151; font-weight:600;">
+            📐 <span>Schema: products (19 columns)</span> <a href="/schema" target="_blank" style="margin-left:auto; color:#6b7280; font-size:11px; text-decoration:underline;">Full schema page →</a>
         </div>
         <div id="schema-content" style="display:none; margin-bottom:24px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
             <table class="data-table" style="font-size:12px;">
-                <thead><tr><th>Column</th><th>Type</th><th>Nullable</th><th>Description</th></tr></thead>
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
                 <tbody>
                     <tr><td><code>id</code></td><td>integer PK</td><td>NOT NULL</td><td>Auto-increment ID</td></tr>
                     <tr><td><code>platform</code></td><td>varchar(50)</td><td>NOT NULL</td><td>amazon_br / amazon_us / ml</td></tr>
@@ -569,18 +569,13 @@
                     <tr><td><code>url</code></td><td>text</td><td>NULL</td><td>Product page URL</td></tr>
                     <tr><td><code>image_urls</code></td><td>text[]</td><td>NULL</td><td>Array of image URLs</td></tr>
                     <tr><td><code>sales_30d</code></td><td>integer</td><td>default 0</td><td>Estimated 30-day sales</td></tr>
-                    <tr><td><code>sales_30d_text</code></td><td>varchar(50)</td><td>NULL</td><td>Raw sales text (ex: "5K+ bought")</td></tr>
                     <tr><td><code>review_count</code></td><td>integer</td><td>default 0</td><td>Number of reviews</td></tr>
                     <tr><td><code>review_avg</code></td><td>numeric(3,1)</td><td>NULL</td><td>Average stars (1.0-5.0)</td></tr>
-                    <tr><td><code>bsr_rank</code></td><td>integer</td><td>NULL</td><td>Best Sellers Rank</td></tr>
-                    <tr><td><code>category</code></td><td>varchar(50)</td><td>NULL</td><td>Legacy category</td></tr>
                     <tr><td><code>category_l1</code></td><td>varchar(100)</td><td>NULL</td><td>Level 1 (ex: Audio)</td></tr>
                     <tr><td><code>category_l2</code></td><td>varchar(100)</td><td>NULL</td><td>Level 2 (ex: Microfones)</td></tr>
                     <tr><td><code>category_l3</code></td><td>varchar(100)</td><td>NULL</td><td>Level 3 (ex: Lapela Sem Fio)</td></tr>
-                    <tr><td><code>image_hash</code></td><td>varchar(64)</td><td>NULL</td><td>SHA256 image hash for dedup matching</td></tr>
-                    <tr><td><code>supplier_name</code></td><td>varchar(200)</td><td>NULL</td><td>Supplier / brand name</td></tr>
-                    <tr><td><code>raw_data</code></td><td>jsonb</td><td>NULL</td><td>Original scraped data (JSON)</td></tr>
-                    <tr><td><code>embedding</code></td><td>vector(768)</td><td>NULL</td><td>CLIP embedding for image matching</td></tr>
+                    <tr><td><code>image_hash</code></td><td>varchar(64)</td><td>NULL</td><td>SHA256 image hash for dedup</td></tr>
+                    <tr><td><code>embedding</code></td><td>vector(768)</td><td>NULL</td><td>CLIP embedding for matching</td></tr>
                     <tr><td><code>is_active</code></td><td>boolean</td><td>default true</td><td>Product is active</td></tr>
                     <tr><td><code>created_at</code></td><td>timestamp</td><td>default now()</td><td>Insert timestamp</td></tr>
                     <tr><td><code>last_updated</code></td><td>timestamp</td><td>default now()</td><td>Last update timestamp</td></tr>

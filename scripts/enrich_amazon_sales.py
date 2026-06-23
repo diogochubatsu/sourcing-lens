@@ -158,12 +158,12 @@ def main():
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cur.execute("""
-        SELECT id, platform_id, title, bsr_rank
+        SELECT id, platform_id, title
         FROM products
         WHERE platform = %s
           AND is_active = true
           AND sales_30d IS NULL
-        ORDER BY bsr_rank NULLS LAST, id
+        ORDER BY id
         LIMIT %s
     """, (args.platform, args.limit))
 
@@ -222,7 +222,7 @@ def main():
             if not args.dry_run:
                 cur.execute("""
                     UPDATE products
-                    SET sales_30d = %s, sales_30d_text = %s
+                    SET sales_30d = %s
                     WHERE id = %s
                 """, (sales, sales_text[:200] if sales_text else None, p['id']))
             updated += 1

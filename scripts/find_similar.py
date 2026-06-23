@@ -15,7 +15,7 @@ def find_similar(embedding, limit=10, category=None, exclude_id=None):
     params = [embedding]
     
     if category:
-        where += " AND p.category = %s"
+        where += " AND p.category_l1 = %s"
         params.append(category)
     if exclude_id:
         where += " AND p.id != %s"
@@ -23,7 +23,7 @@ def find_similar(embedding, limit=10, category=None, exclude_id=None):
     
     sql = f"""
         SELECT p.id, p.platform, p.platform_id, p.title, p.price, p.sales_30d,
-               p.category, p.image_urls[1] as img,
+               p.category_l1, p.image_urls[1] as img,
                1 - (p.embedding <=> %s::vector) as similarity
         FROM products p
         {where}
@@ -37,7 +37,7 @@ def match_category(category):
     """Run matching within a category using embedding similarity."""
     products = query("""
         SELECT id, platform, platform_id, embedding 
-        FROM products WHERE category=%s AND embedding IS NOT NULL
+        FROM products WHERE category_l1=%s AND embedding IS NOT NULL
         ORDER BY platform, id
     """, (category,))
     
@@ -50,7 +50,7 @@ def match_category(category):
     for br in br_products:
         sql = """
             SELECT id, platform_id, 1 - (embedding <=> %s::vector) as sim
-            FROM products WHERE platform='ml' AND category=%s AND embedding IS NOT NULL
+            FROM products WHERE platform='ml' AND category_l1=%s AND embedding IS NOT NULL
             ORDER BY embedding <=> %s::vector LIMIT 1
         """
         best = query(sql, (br['embedding'], category, br['embedding']))

@@ -397,9 +397,7 @@ def parse_best_sellers_br(html: str, category_name: str) -> list[dict]:
             "image_url": image_url,
             "review_avg": review_avg,
             "review_count": review_count,
-            "bsr_rank": bsr_rank,
-            "category": category_name,
-        }
+                }
         products.append(product)
 
     return products
@@ -558,9 +556,7 @@ def parse_best_sellers_us(html: str, category_name: str) -> list[dict]:
             "image_url": image_url,
             "review_avg": review_avg,
             "review_count": review_count,
-            "bsr_rank": bsr_rank,
-            "category": category_name,
-        }
+                }
         products.append(product)
 
     return products
@@ -665,10 +661,8 @@ def upsert_product(product: dict, dry_run: bool = False) -> bool:
                         image_hash = COALESCE(%s, image_hash),
                         review_count = COALESCE(%s, review_count),
                         review_avg = COALESCE(%s, review_avg),
-                        bsr_rank = COALESCE(%s, bsr_rank),
-                        sales_30d = COALESCE(%s, sales_30d),
-                        category = COALESCE(%s, category),
-                        last_updated = NOW()
+                                        sales_30d = COALESCE(%s, sales_30d),
+                                        last_updated = NOW()
                     WHERE platform = %s AND platform_id = %s
                 """, (
                     product.get("title"),
@@ -679,10 +673,8 @@ def upsert_product(product: dict, dry_run: bool = False) -> bool:
                     image_hash,
                     product.get("review_count"),
                     product.get("review_avg"),
-                    product.get("bsr_rank"),
-                    product.get("sales_30d"),
-                    product.get("category"),
-                    product["platform"],
+                            product.get("sales_30d"),
+                            product["platform"],
                     product["platform_id"],
                 ))
                 log.info(f"Updated: {product['platform_id']} - {product['title'][:50]}...")
@@ -710,10 +702,8 @@ def upsert_product(product: dict, dry_run: bool = False) -> bool:
                     image_hash,
                     product.get("review_count", 0),
                     product.get("review_avg"),
-                    product.get("bsr_rank"),
-                    product.get("sales_30d"),
-                    product.get("category"),
-                    "Amazon BR" if product["platform"] == "amazon_br" else "Amazon US",
+                            product.get("sales_30d"),
+                            "Amazon BR" if product["platform"] == "amazon_br" else "Amazon US",
                     json.dumps({
                         "scraped_at": datetime.now().isoformat(),
                         "source": "bestsellers_scraper",

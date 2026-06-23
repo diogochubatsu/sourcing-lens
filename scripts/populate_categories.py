@@ -10,7 +10,7 @@ with open(HIERARCHY_FILE) as f:
     hierarchy = json.load(f)
 
 products = query("""
-    SELECT id, category, category_l1, category_l2, category_l3
+    SELECT id, category_l1, category_l2, category_l3
     FROM products WHERE is_active=true
 """)
 
@@ -19,12 +19,12 @@ skipped = 0
 missing = 0
 
 for p in products:
-    cat = p['category']
+    cat = p.get('category_l1', '')
     if not cat:
         missing += 1
         continue
 
-    if p['category_l1'] and p['category_l2'] and p['category_l3']:
+    if p.get('category_l2') and p.get('category_l3'):
         skipped += 1
         continue
 

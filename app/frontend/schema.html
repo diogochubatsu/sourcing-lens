@@ -7,34 +7,26 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0f1117; color: #e1e4e8; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; line-height: 1.6; }
-        
         .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
-        
         .header { text-align: center; padding: 40px 0 32px; border-bottom: 1px solid #21262d; margin-bottom: 40px; }
         .header h1 { font-size: 28px; font-weight: 700; color: #58a6ff; letter-spacing: -0.5px; }
         .header .subtitle { color: #8b949e; font-size: 14px; margin-top: 8px; }
-        .header .db-info { display: flex; justify-content: center; gap: 32px; margin-top: 16px; font-size: 13px; }
+        .header .db-info { display: flex; justify-content: center; gap: 32px; margin-top: 16px; font-size: 13px; flex-wrap: wrap; }
         .header .db-info span { color: #8b949e; }
         .header .db-info strong { color: #58a6ff; }
-        
         .back-link { display: inline-flex; align-items: center; gap: 6px; color: #58a6ff; text-decoration: none; font-size: 13px; margin-bottom: 24px; }
         .back-link:hover { text-decoration: underline; }
-        
-        .table-card { background: #161b22; border: 1px solid #21262d; border-radius: 8px; margin-bottom: 32px; overflow: hidden; }
+        .table-card { background: #161b22; border: 1px solid #21262d; border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
         .table-card-header { padding: 16px 20px; background: #1c2128; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .table-card-header h2 { font-size: 16px; font-weight: 600; color: #c9d1d9; }
-        .table-card-header .badge { background: #1f6feb33; color: #58a6ff; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+        .table-card-header .badge { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
         .table-card-header .row-count { color: #8b949e; font-size: 12px; margin-left: auto; }
         .table-card-header .chevron { color: #8b949e; transition: transform 0.2s; }
-        
-        .table-card-body { padding: 0; }
-        
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         thead th { background: #1c2128; padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #21262d; position: sticky; top: 0; }
         tbody td { padding: 10px 16px; border-bottom: 1px solid #21262d; vertical-align: top; }
         tbody tr:hover { background: #1c2128; }
         tbody tr:last-child td { border-bottom: none; }
-        
         .col-name { color: #7ee787; font-weight: 500; white-space: nowrap; }
         .col-type { color: #d2a8ff; white-space: nowrap; }
         .col-pk { color: #f0883e; font-size: 10px; font-weight: 600; }
@@ -42,36 +34,33 @@
         .col-default { color: #8b949e; font-size: 11px; }
         .col-desc { color: #c9d1d9; }
         .col-example { color: #79c0ff; font-size: 11px; font-style: italic; }
-        
         .index-list { padding: 12px 16px; background: #1c2128; border-top: 1px solid #21262d; font-size: 12px; }
         .index-list span { color: #8b949e; }
         .idx-name { color: #d2a8ff; }
-        .idx-cols { color: #7ee787; }
         .idx-unique { color: #f0883e; font-size: 10px; font-weight: 600; }
         .idx-partial { color: #8b949e; font-size: 11px; font-style: italic; }
-        
         .relationship { display: flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 12px; color: #8b949e; }
         .relationship .arrow { color: #58a6ff; }
         .relationship .ref-table { color: #d2a8ff; }
         .relationship .ref-col { color: #7ee787; }
-        
         .section-title { font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262d; }
-        
         .type-legend { display: flex; flex-wrap: wrap; gap: 16px; padding: 16px 0; margin-bottom: 24px; }
         .type-legend .item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
         .type-legend .swatch { width: 12px; height: 12px; border-radius: 3px; }
+        code { background: #1c2128; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="/" class="back-link">← Back to Dashboard</a>
-        
+
         <div class="header">
             <h1>📐 Bronze Schema</h1>
             <p class="subtitle">Database structure for ArbitLens product intelligence</p>
             <div class="db-info">
                 <span>Database: <strong>arbtbr</strong></span>
                 <span>Engine: <strong>PostgreSQL + pgvector</strong></span>
+                <span>Tables: <strong>6</strong></span>
                 <span id="total-products">Products: <strong>—</strong></span>
                 <span id="total-matches">Matches: <strong>—</strong></span>
             </div>
@@ -85,11 +74,13 @@
             <div class="item"><div class="swatch" style="background:#79c0ff;"></div> Example value</div>
         </div>
 
-        <!-- ─── PRODUCTS ─── -->
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PRODUCTS — 19 columns                           -->
+        <!-- ════════════════════════════════════════════════ -->
         <div class="table-card" id="products-card">
             <div class="table-card-header" onclick="toggleCard('products')">
                 <h2>📦 products</h2>
-                <span class="badge">PRIMARY TABLE</span>
+                <span class="badge" style="background:#1f6feb33; color:#58a6ff;">PRIMARY TABLE</span>
                 <span class="row-count" id="products-count">— rows</span>
                 <span class="chevron" id="products-chevron">▾</span>
             </div>
@@ -105,20 +96,15 @@
                         <tr><td class="col-name">currency</td><td class="col-type">varchar(10)</td><td>NULL</td><td class="col-desc">ISO currency code</td><td class="col-example">BRL, USD</td></tr>
                         <tr><td class="col-name">url</td><td class="col-type">text</td><td>NULL</td><td class="col-desc">Direct link to product page on the marketplace</td><td class="col-example">https://www.amazon.com.br/dp/B0CFYR1VHK</td></tr>
                         <tr><td class="col-name">image_urls</td><td class="col-type">text[]</td><td>NULL</td><td class="col-desc">Array of image URLs for the product</td><td class="col-example">["https://...jpg"]</td></tr>
-                        <tr><td class="col-name">sales_30d</td><td class="col-type">integer</td><td class="col-default">default 0</td><td class="col-desc">Estimated monthly sales volume (computed from "bought in past month" or BSR rank)</td><td class="col-example">410000</td></tr>
-                        <tr><td class="col-name">sales_30d_text</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Raw sales text scraped from the listing</td><td class="col-example">"5K+ bought in past month"</td></tr>
+                        <tr><td class="col-name">sales_30d</td><td class="col-type">integer</td><td class="col-default">default 0</td><td class="col-desc">Estimated monthly sales volume — parsed from "bought in past month" text or BSR rank</td><td class="col-example">410000</td></tr>
                         <tr><td class="col-name">review_count</td><td class="col-type">integer</td><td class="col-default">default 0</td><td class="col-desc">Total number of customer reviews</td><td class="col-example">1244</td></tr>
                         <tr><td class="col-name">review_avg</td><td class="col-type">numeric(3,1)</td><td>NULL</td><td class="col-desc">Average customer rating (1.0 to 5.0)</td><td class="col-example">4.5</td></tr>
-                        <tr><td class="col-name">bsr_rank</td><td class="col-type">integer</td><td>NULL</td><td class="col-desc">Best Sellers Rank within its category (lower = better)</td><td class="col-example">1, 42, 1500</td></tr>
-                        <tr><td class="col-name">category</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Legacy single-level category label (deprecated, use l1/l2/l3)</td><td class="col-example">"microfone"</td></tr>
                         <tr><td class="col-name">category_l1</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">Taxonomy level 1 — top-level department</td><td class="col-example">Audio, Moda Intima, Casa</td></tr>
                         <tr><td class="col-name">category_l2</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">Taxonomy level 2 — product group within L1</td><td class="col-example">Microfones, Calcinhas, Caixas de Som</td></tr>
                         <tr><td class="col-name">category_l3</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">Taxonomy level 3 — specific product type</td><td class="col-example">Lapela Sem Fio, Fio Dental, Portátil</td></tr>
                         <tr><td class="col-name">image_hash</td><td class="col-type">varchar(64)</td><td>NULL</td><td class="col-desc">SHA256 hash of the product image for dedup and cross-platform matching</td><td class="col-example">f8f887e49113c41f</td></tr>
-                        <tr><td class="col-name">supplier_name</td><td class="col-type">varchar(200)</td><td>NULL</td><td class="col-desc">Brand or supplier name (when available)</td><td class="col-example">"Puma", "Genérica"</td></tr>
-                        <tr><td class="col-name">raw_data</td><td class="col-type">jsonb</td><td>NULL</td><td class="col-desc">Original scraped JSON blob — preserves all source fields for future use</td><td class="col-example">{"source": "bestsellers_scraper"}</td></tr>
-                        <tr><td class="col-name">embedding</td><td class="col-type">vector(768)</td><td>NULL</td><td class="col-desc">CLIP ViT-B/32 image embedding for cosine similarity matching across platforms</td><td class="col-example">[-0.015, 0.021, …] (768 dims)</td></tr>
-                        <tr><td class="col-name">is_active</td><td class="col-type">boolean</td><td class="col-default">default true</td><td class="col-desc">Soft-delete flag — false means product is archived</td><td class="col-example">true</td></tr>
+                        <tr><td class="col-name">embedding</td><td class="col-type">vector(768)</td><td>NULL</td><td class="col-desc">CLIP ViT-B/32 image embedding — cosine similarity for cross-platform matching</td><td class="col-example">[-0.015, 0.021, …] (768 dims)</td></tr>
+                        <tr><td class="col-name">is_active</td><td class="col-type">boolean</td><td class="col-default">default true</td><td class="col-desc">Soft-delete flag — false means archived</td><td class="col-example">true</td></tr>
                         <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Row creation timestamp</td><td class="col-example">2026-06-08T15:40:20</td></tr>
                         <tr><td class="col-name">last_updated</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Last modification timestamp</td><td class="col-example">2026-06-23T01:16:57</td></tr>
                     </tbody>
@@ -134,25 +120,27 @@
             </div>
         </div>
 
-        <!-- ─── MATCHES ─── -->
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- MATCHES                                         -->
+        <!-- ════════════════════════════════════════════════ -->
         <div class="table-card" id="matches-card">
             <div class="table-card-header" onclick="toggleCard('matches')">
                 <h2>🔗 matches</h2>
                 <span class="badge" style="background:#23863633; color:#3fb950;">CORE</span>
                 <span class="row-count" id="matches-count">— rows</span>
-                <span class="chevron" id="matches-chevron">▾</span>
+                <span class="chevron" id="matches-chevron">▸</span>
             </div>
             <div class="table-card-body" id="matches-body" style="display:none;">
                 <table>
                     <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
                     <tbody>
-                        <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span> <span class="col-notnull">NOT NULL</span></td><td class="col-desc">Auto-increment primary key</td></tr>
+                        <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span></td><td class="col-desc">Auto-increment primary key</td></tr>
                         <tr><td class="col-name">product_a_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">First product in the match pair (typically higher-seller)</td></tr>
                         <tr><td class="col-name">product_b_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">Second product in the match pair (typically lower-seller)</td></tr>
-                        <tr><td class="col-name">match_score</td><td class="col-type">numeric(5,4)</td><td>NULL</td><td class="col-desc">Confidence score 0.0–1.0 from CLIP cosine similarity + title matching</td></tr>
+                        <tr><td class="col-name">match_score</td><td class="col-type">numeric(5,4)</td><td>NULL</td><td class="col-desc">Confidence score 0.0–1.0 from CLIP cosine similarity + title overlap</td></tr>
                         <tr><td class="col-name">match_type</td><td class="col-type">varchar(20)</td><td>NULL</td><td class="col-desc">How the match was found: image, title, combined, manual</td></tr>
-                        <tr><td class="col-name">margin_pct</td><td class="col-type">numeric(6,2)</td><td>NULL</td><td class="col-desc">Estimated profit margin percentage (selling price − cost) / cost × 100</td></tr>
-                        <tr><td class="col-name">confidence</td><td class="col-type">numeric(3,2)</td><td>NULL</td><td class="col-desc">Business confidence tier: 0.90 = high, 0.70 = medium, 0.50 = low</td></tr>
+                        <tr><td class="col-name">margin_pct</td><td class="col-type">numeric(6,2)</td><td>NULL</td><td class="col-desc">Estimated profit margin percentage (sell − cost) / cost × 100</td></tr>
+                        <tr><td class="col-name">confidence</td><td class="col-type">numeric(3,2)</td><td>NULL</td><td class="col-desc">Business confidence tier: 0.90 high, 0.70 medium, 0.50 low</td></tr>
                         <tr><td class="col-name">is_active</td><td class="col-type">boolean</td><td class="col-default">default true</td><td class="col-desc">Soft-delete flag</td></tr>
                         <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Row creation timestamp</td></tr>
                         <tr><td class="col-name">last_updated</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Last modification timestamp</td></tr>
@@ -162,7 +150,9 @@
             </div>
         </div>
 
-        <!-- ─── PRICE HISTORY ─── -->
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- PRICE HISTORY                                   -->
+        <!-- ════════════════════════════════════════════════ -->
         <div class="table-card" id="price-history-card">
             <div class="table-card-header" onclick="toggleCard('price-history')">
                 <h2>📈 price_history</h2>
@@ -184,7 +174,9 @@
             </div>
         </div>
 
-        <!-- ─── ALERTS ─── -->
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- ALERTS                                          -->
+        <!-- ════════════════════════════════════════════════ -->
         <div class="table-card" id="alerts-card">
             <div class="table-card-header" onclick="toggleCard('alerts')">
                 <h2>🔔 alerts</h2>
@@ -198,7 +190,7 @@
                     <tbody>
                         <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span></td><td class="col-desc">Auto-increment primary key</td></tr>
                         <tr><td class="col-name">product_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">Product that triggered the alert</td></tr>
-                        <tr><td class="col-name">alert_type</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Type of alert: price_drop, new_match, stock_change</td></tr>
+                        <tr><td class="col-name">alert_type</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Type: price_drop, new_match, stock_change</td></tr>
                         <tr><td class="col-name">message</td><td class="col-type">text</td><td>NULL</td><td class="col-desc">Human-readable alert description</td></tr>
                         <tr><td class="col-name">is_read</td><td class="col-type">boolean</td><td class="col-default">default false</td><td class="col-desc">Whether the user has seen this alert</td></tr>
                         <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Alert creation timestamp</td></tr>
@@ -208,7 +200,9 @@
             </div>
         </div>
 
-        <!-- ─── FAVORITES ─── -->
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- FAVORITES                                       -->
+        <!-- ════════════════════════════════════════════════ -->
         <div class="table-card" id="favorites-card">
             <div class="table-card-header" onclick="toggleCard('favorites')">
                 <h2>⭐ favorites</h2>
@@ -231,7 +225,9 @@
             </div>
         </div>
 
-        <!-- ─── CUSTOM ALERTS ─── -->
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- CUSTOM ALERTS                                   -->
+        <!-- ════════════════════════════════════════════════ -->
         <div class="table-card" id="custom-alerts-card">
             <div class="table-card-header" onclick="toggleCard('custom-alerts')">
                 <h2>🚨 custom_alerts</h2>
@@ -246,7 +242,7 @@
                         <tr><td class="col-name">id</td><td class="col-type">integer</td><td><span class="col-pk">PK</span></td><td class="col-desc">Auto-increment primary key</td></tr>
                         <tr><td class="col-name">product_id</td><td class="col-type">integer</td><td><span class="col-notnull">NOT NULL</span> FK → products.id</td><td class="col-desc">Product to monitor</td></tr>
                         <tr><td class="col-name">user_id</td><td class="col-type">varchar(100)</td><td>NULL</td><td class="col-desc">User who set the alert</td></tr>
-                        <tr><td class="col-name">condition_type</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Trigger condition: price_below, price_above, back_in_stock</td></tr>
+                        <tr><td class="col-name">condition_type</td><td class="col-type">varchar(50)</td><td>NULL</td><td class="col-desc">Trigger: price_below, price_above, back_in_stock</td></tr>
                         <tr><td class="col-name">threshold</td><td class="col-type">numeric(10,2)</td><td>NULL</td><td class="col-desc">Numeric threshold for the condition</td></tr>
                         <tr><td class="col-name">is_active</td><td class="col-type">boolean</td><td class="col-default">default true</td><td class="col-desc">Whether this alert is still armed</td></tr>
                         <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-default">default now()</td><td class="col-desc">Alert creation timestamp</td></tr>
@@ -256,37 +252,54 @@
             </div>
         </div>
 
-        <!-- ─── ENTITY RELATIONSHIP ─── -->
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- ENTITY RELATIONSHIPS                            -->
+        <!-- ════════════════════════════════════════════════ -->
         <div class="section-title">Entity Relationships</div>
-        <div style="background:#161b22; border:1px solid #21262d; border-radius:8px; padding:24px; font-size:13px; line-height:2; margin-bottom:32px;">
+        <div style="background:#161b22; border:1px solid #21262d; border-radius:8px; padding:24px; font-size:13px; line-height:2.2; margin-bottom:32px;">
             <code style="color:#7ee787;">products</code>
-            <span style="color:#8b949e;">  ←</span>
-            <code style="color:#d2a8ff;">matches.product_a_id</code> /
-            <code style="color:#d2a8ff;">matches.product_b_id</code>
-            <span style="color:#8b949e;">  (1:N)</span><br>
+            <span style="color:#8b949e;"> ← </span><code style="color:#d2a8ff;">matches.product_a_id</code> / <code style="color:#d2a8ff;">matches.product_b_id</code>
+            <span style="color:#8b949e;"> (1:N)</span><br>
             <code style="color:#7ee787;">products</code>
-            <span style="color:#8b949e;">  ←</span>
-            <code style="color:#d2a8ff;">price_history.product_id</code>
-            <span style="color:#8b949e;">  (1:N)</span><br>
+            <span style="color:#8b949e;"> ← </span><code style="color:#d2a8ff;">price_history.product_id</code>
+            <span style="color:#8b949e;"> (1:N)</span><br>
             <code style="color:#7ee787;">products</code>
-            <span style="color:#8b949e;">  ←</span>
-            <code style="color:#d2a8ff;">alerts.product_id</code>
-            <span style="color:#8b949e;">  (1:N)</span><br>
+            <span style="color:#8b949e;"> ← </span><code style="color:#d2a8ff;">alerts.product_id</code>
+            <span style="color:#8b949e;"> (1:N)</span><br>
             <code style="color:#7ee787;">products</code>
-            <span style="color:#8b949e;">  ←</span>
-            <code style="color:#d2a8ff;">favorites.product_id</code>
-            <span style="color:#8b949e;">  (1:N)</span><br>
+            <span style="color:#8b949e;"> ← </span><code style="color:#d2a8ff;">favorites.product_id</code>
+            <span style="color:#8b949e;"> (1:N)</span><br>
             <code style="color:#7ee787;">products</code>
-            <span style="color:#8b949e;">  ←</span>
-            <code style="color:#d2a8ff;">custom_alerts.product_id</code>
-            <span style="color:#8b949e;">  (1:N)</span>
+            <span style="color:#8b949e;"> ← </span><code style="color:#d2a8ff;">custom_alerts.product_id</code>
+            <span style="color:#8b949e;"> (1:N)</span>
         </div>
 
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- SCHEMA AUDIT                                    -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="section-title">Schema Audit (June 2026)</div>
+        <div style="background:#161b22; border:1px solid #21262d; border-radius:8px; padding:20px; font-size:13px; color:#8b949e; line-height:1.8;">
+            <p style="color:#58a6ff; font-weight:600; margin-bottom:8px;">Dropped 5 columns (24 → 19):</p>
+            <table style="font-size:12px; margin-bottom:16px;">
+                <thead><tr><th style="color:#f85149;">Column</th><th style="color:#8b949e;">Why removed</th></tr></thead>
+                <tbody>
+                    <tr><td style="color:#c9d1d9;"><code style="color:#f85149;">category</code></td><td>Legacy single-level field — replaced by category_l1/l2/l3</td></tr>
+                    <tr><td style="color:#c9d1d9;"><code style="color:#f85149;">sales_30d_text</code></td><td>Raw text ("~43000/month") — parsed into sales_30d integer, never displayed</td></tr>
+                    <tr><td style="color:#c9d1d9;"><code style="color:#f85149;">bsr_rank</code></td><td>Best Sellers Rank — used only during sales estimation, not for matching or display</td></tr>
+                    <tr><td style="color:#c9d1d9;"><code style="color:#f85149;">supplier_name</code></td><td>Computed from platform field, 46% fill, not used in matching</td></tr>
+                    <tr><td style="color:#c9d1d9;"><code style="color:#f85149;">raw_data</code></td><td>JSONB blob with just scraped_at + source metadata — 40% fill, dead weight</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- ARCHITECTURE NOTES                              -->
+        <!-- ════════════════════════════════════════════════ -->
         <div class="section-title">Architecture Notes</div>
         <div style="background:#161b22; border:1px solid #21262d; border-radius:8px; padding:20px; font-size:13px; color:#8b949e; line-height:1.8;">
             <p><strong style="color:#58a6ff;">Bronze layer:</strong> Raw scraped data with minimal transformation. Prices, sales, and categories are normalized but not enriched.</p>
-            <p style="margin-top:12px;"><strong style="color:#58a6ff;">Cross-platform matching:</strong> Products are matched via CLIP image embeddings (vector cosine similarity at ≥0.70 threshold) + title keyword overlap. Matches are 1-to-1 deduped.</p>
-            <p style="margin-top:12px;"><strong style="color:#58a6ff;">Taxonomy:</strong> 3-level hierarchy (L1/L2/L3) is assigned via pattern-matching on titles against a curated taxonomy tree. L1 = department, L2 = group, L3 = type.</p>
+            <p style="margin-top:12px;"><strong style="color:#58a6ff;">Cross-platform matching:</strong> Products are matched via CLIP image embeddings (vector cosine similarity ≥0.70 threshold) + title keyword overlap. Matches are 1-to-1 deduped.</p>
+            <p style="margin-top:12px;"><strong style="color:#58a6ff;">Taxonomy:</strong> 3-level hierarchy (L1/L2/L3) assigned via pattern-matching on titles against a curated taxonomy tree. L1 = department, L2 = group, L3 = type.</p>
             <p style="margin-top:12px;"><strong style="color:#58a6ff;">Sales estimation:</strong> Amazon "bought in past month" text is parsed (5K+ → 5000). ML sales come from listing metadata. Amazon US uses BSR-based estimation when direct sales are unavailable.</p>
             <p style="margin-top:12px;"><strong style="color:#58a6ff;">Soft delete:</strong> <code style="color:#7ee787;">is_active = false</code> archives products without removing data. All active queries filter on <code style="color:#7ee787;">is_active = TRUE</code>.</p>
         </div>
@@ -308,8 +321,6 @@
                 chevron.textContent = '▸';
             }
         }
-
-        // Load row counts
         async function loadCounts() {
             try {
                 var res = await fetch('/api/stats');
@@ -317,9 +328,7 @@
                 document.getElementById('products-count').textContent = (stats.total_products || 0).toLocaleString() + ' rows';
                 document.getElementById('total-products').innerHTML = 'Products: <strong>' + (stats.total_products || 0).toLocaleString() + '</strong>';
                 document.getElementById('total-matches').innerHTML = 'Matches: <strong>' + (stats.total_matches || 0).toLocaleString() + '</strong>';
-            } catch(e) {
-                console.error('Failed to load stats', e);
-            }
+            } catch(e) {}
             try {
                 var res2 = await fetch('/api/matches?limit=1');
                 var data = await res2.json();
