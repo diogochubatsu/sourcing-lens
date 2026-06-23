@@ -16,7 +16,8 @@ def list_products(
     has_sales: Optional[bool] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
-    limit: int = Query(100, ge=1, le=1000)
+    limit: int = Query(100, ge=1, le=5000),
+    offset: int = Query(0, ge=0)
 ):
     """List products, optionally filtered by platform, category, sales, or price."""
     from database import query as db_query
@@ -45,8 +46,12 @@ def list_products(
         conditions.append("price <= %s")
         params.append(max_price)
     
-    sql = f"SELECT * FROM products WHERE {' AND '.join(conditions)} ORDER BY sales_30d DESC NULLS LAST LIMIT %s"
-    params.append(limit)
+    # Count total matching rows
+    count_sql = f"SELECT COUNT(*) FROM products WHERE {' AND '.join(conditions)}"
+    total = db_query(count_sql, tuple(params))[0]['count']
+    
+    sql = f"SELECT * FROM products WHERE {' AND '.join(conditions)} ORDER BY sales_30d DESC NULLS LAST LIMIT %s OFFSET %s"
+    params.extend([limit, offset])
     rows = db_query(sql, tuple(params))
     results = []
     for r in rows:
@@ -57,7 +62,7 @@ def list_products(
             elif isinstance(v, Decimal):
                 d[k] = float(v)
         results.append(d)
-    return {"products": results, "count": len(results)}
+    return {"products": results, "count": total}
 
 
 @router.get("/stats")

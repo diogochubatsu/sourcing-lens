@@ -711,7 +711,7 @@
             }
             
             try {
-                var resp = await fetch('/api/products?limit=20');
+                var resp = await fetch('/api/products?limit=200');
                 var data = await resp.json();
                 var products = data.products || [];
                 
@@ -918,10 +918,21 @@
             await populateCategoryFilter();
 
             try {
-                var r = await fetch('/api/products?limit=500');
-                if (!r.ok) throw new Error('Failed to load products');
-                var data = await r.json();
-                window.allProducts = data.products || [];
+                // Paginate to get all products (backend max ~1000 per request)
+                var allProds = [];
+                var offset = 0;
+                var batchSize = 1000;
+                while (true) {
+                    var r = await fetch('/api/products?limit=' + batchSize + '&offset=' + offset);
+                    if (!r.ok) throw new Error('Failed to load products at offset ' + offset);
+                    var data = await r.json();
+                    var batch = data.products || [];
+                    allProds = allProds.concat(batch);
+                    if (batch.length < batchSize) break;
+                    offset += batchSize;
+                }
+                window.allProducts = allProds;
+                console.log('Loaded ' + allProds.length + ' products');
             } catch(e) {
                 console.error('Error loading products:', e);
                 window.allProducts = [];
