@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>arbt.ly — Migration Schema</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0f1117; color: #e1e4e8; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; line-height: 1.6; }
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+        .header { padding: 40px 0 32px; border-bottom: 1px solid #21262d; margin-bottom: 40px; }
+        .header h1 { font-size: 24px; font-weight: 700; color: #58a6ff; }
+        .header .subtitle { color: #8b949e; font-size: 13px; margin-top: 8px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #58a6ff; text-decoration: none; font-size: 13px; margin-bottom: 24px; }
+        .back-link:hover { text-decoration: underline; }
+        .section { margin-bottom: 40px; }
+        .section h2 { font-size: 16px; font-weight: 600; color: #c9d1d9; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #21262d; }
+        .section h3 { font-size: 14px; font-weight: 600; color: #8b949e; margin: 16px 0 8px; }
+        .note { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 16px; font-size: 13px; color: #8b949e; line-height: 1.8; margin-bottom: 16px; }
+        .note strong { color: #58a6ff; }
+        .note code { background: #1c2128; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+        .sql-block { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 20px; font-size: 13px; line-height: 1.8; overflow-x: auto; margin-bottom: 16px; }
+        .sql-block .kw { color: #ff7b72; }
+        .sql-block .type { color: #d2a8ff; }
+        .sql-block .str { color: #a5d6ff; }
+        .sql-block .comment { color: #484f58; font-style: italic; }
+        .sql-block .col { color: #7ee787; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+        thead th { background: #1c2128; padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #21262d; }
+        tbody td { padding: 8px 12px; border-bottom: 1px solid #21262d; vertical-align: top; }
+        tbody tr:hover { background: #1c2128; }
+        .cn { color: #7ee787; font-weight: 500; }
+        .ct { color: #d2a8ff; }
+        .pk { color: #f0883e; font-size: 10px; font-weight: 600; }
+        .nn { color: #f85149; font-size: 10px; }
+        .cd { color: #c9d1d9; }
+        .src { color: #8b949e; font-size: 11px; }
+        .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+        .tag-new { background: #1f6feb33; color: #58a6ff; }
+        .tag-direct { background: #23863633; color: #3fb950; }
+        .tag-computed { background: #d2992233; color: #d29922; }
+        ul { padding-left: 20px; font-size: 13px; color: #8b949e; line-height: 2; }
+        ul li code { background: #1c2128; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #7ee787; }
+        .divider { border: none; border-top: 1px solid #21262d; margin: 32px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/schema" class="back-link">← Full schema documentation</a>
+
+        <div class="header">
+            <h1>📦 Migration Schema — Destination Database</h1>
+            <p class="subtitle">Reference for building the client-facing product database. Source: arbt.ly (PostgreSQL + pgvector).</p>
+        </div>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- OVERVIEW                                       -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="section">
+            <h2>Overview</h2>
+            <div class="note">
+                <p><strong>What this page is:</strong> A self-contained reference for an agent (or developer) building the destination database that receives product data from ArbitLens.</p>
+                <p style="margin-top:8px;"><strong>What migrates:</strong> 14 product columns (core data) + optional matches table (denormalized).</p>
+                <p style="margin-top:8px;"><strong>What stays at ArbitLens:</strong> 5 infrastructure columns (id, image_hash, embedding, created_at, last_updated) — these power scraping and matching but aren't product data.</p>
+                <p style="margin-top:8px;"><strong>Sync pattern:</strong> Delta push — we compare our <code>last_updated</code> against your <code>synced_at</code> and push only changed rows.</p>
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- DESTINATION PRODUCTS TABLE                     -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="section">
+            <h2>1. Products Table</h2>
+
+            <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Source</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td class="cn">id</td><td class="ct">SERIAL</td><td><span class="pk">PK</span></td><td><span class="tag tag-new">NEW</span></td><td class="cd">Auto-increment — your own PK, unrelated to source</td></tr>
+                    <tr><td class="cn">source_key</td><td class="ct">VARCHAR(150)</td><td><span class="pk">UNIQUE</span> <span class="nn">NOT NULL</span></td><td><span class="tag tag-computed">COMPUTED</span></td><td class="cd">Composite key: <code>platform:platform_id</code> — use for upserts and linking back to ArbitLens</td></tr>
+                    <tr><td class="cn">platform</td><td class="ct">VARCHAR(50)</td><td><span class="nn">NOT NULL</span></td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">amazon_br / amazon_us / ml</td></tr>
+                    <tr><td class="cn">platform_id</td><td class="ct">VARCHAR(100)</td><td><span class="nn">NOT NULL</span></td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">ASIN (B0CFYR1VHK) or MLB ID (MLB53979422)</td></tr>
+                    <tr><td class="cn">title</td><td class="ct">TEXT</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Full product title as listed on marketplace</td></tr>
+                    <tr><td class="cn">price</td><td class="ct">NUMERIC(10,2)</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Current price in native currency</td></tr>
+                    <tr><td class="cn">currency</td><td class="ct">VARCHAR(10)</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">BRL or USD</td></tr>
+                    <tr><td class="cn">url</td><td class="ct">TEXT</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Direct link to product page</td></tr>
+                    <tr><td class="cn">image_urls</td><td class="ct">TEXT[]</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Array of image URLs</td></tr>
+                    <tr><td class="cn">sales_30d</td><td class="ct">INTEGER</td><td>DEFAULT 0</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Estimated monthly sales volume</td></tr>
+                    <tr><td class="cn">review_count</td><td class="ct">INTEGER</td><td>DEFAULT 0</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Total customer reviews</td></tr>
+                    <tr><td class="cn">review_avg</td><td class="ct">NUMERIC(3,1)</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Average rating (1.0–5.0)</td></tr>
+                    <tr><td class="cn">category_l1</td><td class="ct">VARCHAR(100)</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Level 1 — department (Audio, Moda Intima, Casa…)</td></tr>
+                    <tr><td class="cn">category_l2</td><td class="ct">VARCHAR(100)</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Level 2 — product group (Microfones, Calcinhas…)</td></tr>
+                    <tr><td class="cn">category_l3</td><td class="ct">VARCHAR(100)</td><td>NULL</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Level 3 — product type (Lapela Sem Fio, Fio Dental…)</td></tr>
+                    <tr><td class="cn">is_active</td><td class="ct">BOOLEAN</td><td>DEFAULT TRUE</td><td><span class="tag tag-direct">DIRECT</span></td><td class="cd">Soft-delete flag — false means archived</td></tr>
+                    <tr><td class="cn">synced_at</td><td class="ct">TIMESTAMP</td><td>DEFAULT NOW()</td><td><span class="tag tag-new">NEW</span></td><td class="cd">When ArbitLens last pushed this product</td></tr>
+                </tbody>
+            </table>
+
+            <h3>CREATE TABLE</h3>
+            <div class="sql-block">
+<span class="kw">CREATE TABLE</span> <span class="col">products</span> (
+    <span class="col">id</span>          <span class="type">SERIAL</span>       <span class="kw">PRIMARY KEY</span>,
+    <span class="col">source_key</span>  <span class="type">VARCHAR(150)</span> <span class="kw">UNIQUE NOT NULL</span>,
+    <span class="col">platform</span>    <span class="type">VARCHAR(50)</span>  <span class="kw">NOT NULL</span>,
+    <span class="col">platform_id</span> <span class="type">VARCHAR(100)</span> <span class="kw">NOT NULL</span>,
+    <span class="col">title</span>       <span class="type">TEXT</span>,
+    <span class="col">price</span>       <span class="type">NUMERIC(10,2)</span>,
+    <span class="col">currency</span>    <span class="type">VARCHAR(10)</span>,
+    <span class="col">url</span>         <span class="type">TEXT</span>,
+    <span class="col">image_urls</span>  <span class="type">TEXT[]</span>,
+    <span class="col">sales_30d</span>   <span class="type">INTEGER</span>      <span class="kw">DEFAULT</span> 0,
+    <span class="col">review_count</span> <span class="type">INTEGER</span>     <span class="kw">DEFAULT</span> 0,
+    <span class="col">review_avg</span>  <span class="type">NUMERIC(3,1)</span>,
+    <span class="col">category_l1</span> <span class="type">VARCHAR(100)</span>,
+    <span class="col">category_l2</span> <span class="type">VARCHAR(100)</span>,
+    <span class="col">category_l3</span> <span class="type">VARCHAR(100)</span>,
+    <span class="col">is_active</span>   <span class="type">BOOLEAN</span>      <span class="kw">DEFAULT</span> TRUE,
+    <span class="col">synced_at</span>   <span class="type">TIMESTAMP</span>    <span class="kw">DEFAULT</span> NOW()
+);
+
+<span class="comment">-- Indexes</span>
+<span class="kw">CREATE INDEX</span> <span class="col">idx_dest_platform</span>  <span class="kw">ON</span> products (platform);
+<span class="kw">CREATE INDEX</span> <span class="col">idx_dest_category</span>  <span class="kw">ON</span> products (category_l1, category_l2, category_l3);
+<span class="kw">CREATE INDEX</span> <span class="col">idx_dest_sales</span>     <span class="kw">ON</span> products (sales_30d <span class="kw">DESC NULLS LAST</span>);
+<span class="kw">CREATE INDEX</span> <span class="col">idx_dest_active</span>    <span class="kw">ON</span> products (is_active) <span class="kw">WHERE</span> is_active = TRUE;
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- DESTINATION MATCHES TABLE                      -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="section">
+            <h2>2. Matches Table (optional)</h2>
+
+            <div class="note">
+                <p><strong>When to use:</strong> If the client wants to see cross-platform arbitrage opportunities (e.g., "this Amazon BR product matches this ML product, margin is 15%").</p>
+                <p style="margin-top:8px;"><strong>Denormalized:</strong> Uses <code>source_key</code> instead of internal IDs — works across database restarts and ID remaps.</p>
+            </div>
+
+            <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td class="cn">id</td><td class="ct">SERIAL</td><td><span class="pk">PK</span></td><td class="cd">Auto-increment</td></tr>
+                    <tr><td class="cn">source_key_a</td><td class="ct">VARCHAR(150)</td><td><span class="nn">NOT NULL</span></td><td class="cd">First product: <code>platform:platform_id</code></td></tr>
+                    <tr><td class="cn">source_key_b</td><td class="ct">VARCHAR(150)</td><td><span class="nn">NOT NULL</span></td><td class="cd">Second product: <code>platform:platform_id</code></td></tr>
+                    <tr><td class="cn">confidence</td><td class="ct">NUMERIC(3,2)</td><td>NULL</td><td class="cd">0.90 = high, 0.70 = medium, 0.50 = low</td></tr>
+                    <tr><td class="cn">margin_pct</td><td class="ct">NUMERIC(6,2)</td><td>NULL</td><td class="cd">Estimated profit margin %</td></tr>
+                    <tr><td class="cn">match_method</td><td class="ct">VARCHAR(20)</td><td>NULL</td><td class="cd">image / title / combined</td></tr>
+                    <tr><td class="cn">synced_at</td><td class="ct">TIMESTAMP</td><td>DEFAULT NOW()</td><td class="cd">When this match was last pushed</td></tr>
+                </tbody>
+            </table>
+
+            <h3>CREATE TABLE</h3>
+            <div class="sql-block">
+<span class="kw">CREATE TABLE</span> <span class="col">matches</span> (
+    <span class="col">id</span>            <span class="type">SERIAL</span>       <span class="kw">PRIMARY KEY</span>,
+    <span class="col">source_key_a</span>  <span class="type">VARCHAR(150)</span> <span class="kw">NOT NULL</span>,
+    <span class="col">source_key_b</span>  <span class="type">VARCHAR(150)</span> <span class="kw">NOT NULL</span>,
+    <span class="col">confidence</span>    <span class="type">NUMERIC(3,2)</span>,
+    <span class="col">margin_pct</span>    <span class="type">NUMERIC(6,2)</span>,
+    <span class="col">match_method</span>  <span class="type">VARCHAR(20)</span>,
+    <span class="col">synced_at</span>     <span class="type">TIMESTAMP</span>    <span class="kw">DEFAULT</span> NOW(),
+    <span class="kw">UNIQUE</span> (source_key_a, source_key_b)
+);
+
+<span class="comment">-- FK to products (via source_key)</span>
+<span class="kw">ALTER TABLE</span> matches
+    <span class="kw">ADD CONSTRAINT</span> <span class="col">fk_match_a</span>
+    <span class="kw">FOREIGN KEY</span> (source_key_a) <span class="kw">REFERENCES</span> products(source_key);
+
+<span class="kw">ALTER TABLE</span> matches
+    <span class="kw">ADD CONSTRAINT</span> <span class="col">fk_match_b</span>
+    <span class="kw">FOREIGN KEY</span> (source_key_b) <span class="kw">REFERENCES</span> products(source_key);
+
+<span class="kw">CREATE INDEX</span> <span class="col">idx_match_a</span> <span class="kw">ON</span> matches (source_key_a);
+<span class="kw">CREATE INDEX</span> <span class="col">idx_match_b</span> <span class="kw">ON</span> matches (source_key_b);
+<span class="kw">CREATE INDEX</span> <span class="col">idx_match_conf</span> <span class="kw">ON</span> matches (confidence <span class="kw">DESC</span>);
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- UPSERT / SYNC LOGIC                            -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="section">
+            <h2>3. Sync Logic</h2>
+
+            <h3>Generate source_key</h3>
+            <div class="note">
+                <p>The <code>source_key</code> is always <code>platform:platform_id</code>.</p>
+                <ul style="margin-top:8px;">
+                    <li><code>amazon_br:B0CFYR1VHK</code></li>
+                    <li><code>amazon_us:B09541P9WH</code></li>
+                    <li><code>ml:MLB53979422</code></li>
+                </ul>
+            </div>
+
+            <h3>Upsert product (PostgreSQL)</h3>
+            <div class="sql-block">
+<span class="kw">INSERT INTO</span> products (
+    source_key, platform, platform_id, title, price, currency,
+    url, image_urls, sales_30d, review_count, review_avg,
+    category_l1, category_l2, category_l3, is_active, synced_at
+) <span class="kw">VALUES</span> (
+    <span class="str">'amazon_br:B0CFYR1VHK'</span>, <span class="str">'amazon_br'</span>, <span class="str">'B0CFYR1VHK'</span>,
+    <span class="str">'Kit 6 Pares Meias Puma'</span>, 75.40, <span class="str">'BRL'</span>,
+    <span class="str">'https://amazon.com.br/dp/B0CFYR1VHK'</span>,
+    ARRAY[<span class="str">'https://...jpg'</span>],
+    5000, 120, 4.5,
+    <span class="str">'Moda'</span>, <span class="str">'Meias'</span>, <span class="str">'Cano Médio'</span>,
+    TRUE, NOW()
+)
+<span class="kw">ON CONFLICT</span> (source_key) <span class="kw">DO UPDATE SET</span>
+    title = EXCLUDED.title,
+    price = EXCLUDED.price,
+    sales_30d = EXCLUDED.sales_30d,
+    review_count = EXCLUDED.review_count,
+    review_avg = EXCLUDED.review_avg,
+    is_active = EXCLUDED.is_active,
+    synced_at = NOW();
+            </div>
+
+            <h3>Delta sync query (what to push)</h3>
+            <div class="sql-block">
+<span class="comment">-- Run this on ArbitLens DB to find changed products</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> products
+<span class="kw">WHERE</span> last_updated > <span class="str">'2026-06-23T00:00:00'</span>  <span class="comment">-- last sync timestamp</span>
+  <span class="kw">AND</span> is_active = TRUE;
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- COLUMN MAPPING REFERENCE                       -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="section">
+            <h2>4. Column Mapping Reference</h2>
+
+            <table>
+                <thead><tr><th>Source (arbt.ly)</th><th>Destination</th><th>Notes</th></tr></thead>
+                <tbody>
+                    <tr><td class="cn">platform</td><td class="cn">platform</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">platform_id</td><td class="cn">platform_id</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">platform + platform_id</td><td class="cn">source_key</td><td class="src">Computed: CONCAT(platform, ':', platform_id)</td></tr>
+                    <tr><td class="cn">title</td><td class="cn">title</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">price</td><td class="cn">price</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">currency</td><td class="cn">currency</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">url</td><td class="cn">url</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">image_urls</td><td class="cn">image_urls</td><td class="src">Direct copy (TEXT[] array)</td></tr>
+                    <tr><td class="cn">sales_30d</td><td class="cn">sales_30d</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">review_count</td><td class="cn">review_count</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">review_avg</td><td class="cn">review_avg</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">category_l1</td><td class="cn">category_l1</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">category_l2</td><td class="cn">category_l2</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">category_l3</td><td class="cn">category_l3</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">is_active</td><td class="cn">is_active</td><td class="src">Direct copy</td></tr>
+                    <tr><td class="cn">—</td><td class="cn">synced_at</td><td class="src">Set to NOW() at push time</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="divider">
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- DO NOT INCLUDE                                 -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="section">
+            <h2>5. Columns NOT Migrated</h2>
+
+            <div class="note">
+                <p>These columns exist at ArbitLens for scraping/matching infrastructure. They are <strong>not</strong> part of the product data and should not be in the destination DB.</p>
+            </div>
+
+            <table>
+                <thead><tr><th>Column</th><th>Type</th><th>Why it stays</th></tr></thead>
+                <tbody>
+                    <tr><td class="cn">id</td><td class="ct">integer</td><td class="cd">Internal PK — destination gets its own auto-increment</td></tr>
+                    <tr><td class="cn">image_hash</td><td class="ct">varchar(64)</td><td class="cd">SHA256 hash for dedup matching — infrastructure only</td></tr>
+                    <tr><td class="cn">embedding</td><td class="ct">vector(768)</td><td class="cd">CLIP ViT-B/32 embedding — powers cross-platform matching</td></tr>
+                    <tr><td class="cn">created_at</td><td class="ct">timestamp</td><td class="cd">When we scraped it — audit trail, not product data</td></tr>
+                    <tr><td class="cn">last_updated</td><td class="ct">timestamp</td><td class="cd">When we last refreshed — used for delta sync only</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p style="text-align:center; color:#484f58; font-size:12px; margin-top:40px; padding-bottom:24px;">
+            arbt.ly — See the arbitrage. Before everyone else.
+        </p>
+    </div>
+</body>
+</html>

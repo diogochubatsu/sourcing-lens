@@ -161,9 +161,17 @@ def serve_frontend():
 def serve_schema():
     return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "schema.html"))
 
+@app.get("/migration-schema")
+def serve_migration_schema():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "migration-schema.html"))
+
 @app.get("/schema")
 def serve_schema():
     return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "schema.html"))
+
+@app.get("/migration-schema")
+def serve_migration_schema():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "migration-schema.html"))
 
 frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend")
 if os.path.exists(frontend_dir):
