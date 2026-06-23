@@ -55,3 +55,6 @@ scripts/outputs/
 # npm cache (should never be tracked)
 .npm/
 .venv/
+
+# Local secrets (config keys, env)
+config/*.key
