@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>arbitlens — Wireless Lapel Microphone Type-C</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafafa; color: #1a1a1a; line-height: 1.5; }
+  
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+  
+  /* Header */
+  header { background: #111; color: white; padding: 16px 0; }
+  header .container { display: flex; align-items: center; gap: 12px; }
+  header .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  header .tag { font-size: 11px; background: #333; padding: 2px 8px; border-radius: 10px; color: #aaa; }
+  
+  /* Hero */
+  .hero { background: white; border-bottom: 1px solid #e5e5e5; padding: 40px 0; }
+  .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .hero .subtitle { color: #666; font-size: 15px; margin-bottom: 16px; }
+  .hero .meta { display: flex; gap: 24px; font-size: 13px; color: #888; }
+  .hero .meta span { display: flex; align-items: center; gap: 4px; }
+  
+  /* Stats bar */
+  .stats { display: flex; gap: 0; background: white; border-bottom: 1px solid #e5e5e5; }
+  .stat { flex: 1; padding: 16px 20px; text-align: center; border-right: 1px solid #e5e5e5; }
+  .stat:last-child { border-right: none; }
+  .stat .num { font-size: 24px; font-weight: 700; color: #111; }
+  .stat .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  
+  /* Section */
+  section { padding: 32px 0; }
+  section h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  section h2 .badge { font-size: 11px; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; color: #666; font-weight: 400; }
+  
+  /* Price comparison */
+  .price-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .price-table th { text-align: left; padding: 12px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; background: #fafafa; border-bottom: 1px solid #e5e5e5; }
+  .price-table td { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+  .price-table tr:last-child td { border-bottom: none; }
+  .price-table .plat { display: inline-flex; align-items: center; gap: 6px; }
+  .price-table .plat .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .price-table .price { font-weight: 700; font-size: 16px; }
+  .price-table .price-usd { color: #111; }
+  .price-table .price-cny { color: #666; font-size: 13px; font-weight: 400; }
+  .price-table .seller { color: #888; font-size: 13px; }
+  .price-table a { color: #2563eb; text-decoration: none; font-size: 13px; }
+  .price-table a:hover { text-decoration: underline; }
+  
+  .platform-dhgate { background: #f97316; }
+  .platform-alibaba { background: #eab308; }
+  .platform-rakumart { background: #3b82f6; }
+  .platform-pindau { background: #22c55e; }
+  .platform-mic { background: #ef4444; }
+  
+  /* Image grid */
+  .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .image-card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #e5e5e5; transition: box-shadow 0.15s; }
+  .image-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .image-card img { width: 100%; height: 180px; object-fit: contain; background: #fafafa; padding: 8px; }
+  .image-card .info { padding: 10px 12px; }
+  .image-card .info .name { font-size: 12px; font-weight: 500; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .image-card .info .plat-price { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .image-card .info .plat { font-size: 10px; padding: 1px 6px; border-radius: 8px; color: white; font-weight: 500; }
+  .image-card .info .price { font-size: 13px; font-weight: 700; }
+  
+  /* Confidence */
+  .conf { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; }
+  .conf-high { color: #16a34a; }
+  .conf-mid { color: #d97706; }
+  .conf-low { color: #9ca3af; }
+  
+  /* Insight box */
+  .insight { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
+  .insight .title { font-size: 13px; font-weight: 600; color: #166534; margin-bottom: 4px; }
+  .insight .text { font-size: 13px; color: #15803d; }
+  
+  /* Footer */
+  footer { padding: 24px 0; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #e5e5e5; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">🔬 arbitlens</div>
+    <div class="tag">MVP Product Demo</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container">
+    <h1>Wireless Lapel Microphone Type-C</h1>
+    <div class="subtitle">Cross-marketplace product matching — same product found on 5 China-side platforms</div>
+    <div class="meta">
+      <span>📱 MVP Product — #1 trending on Mercado Livre Brazil</span>
+      <span>📅 Scraped: May 27, 2026</span>
+      <span>🔍 CLIP image matching enabled</span>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num">5</div><div class="label">Platforms</div></div>
+  <div class="stat"><div class="num">30</div><div class="label">Products Found</div></div>
+  <div class="stat"><div class="num">30</div><div class="label">Images Embedded</div></div>
+  <div class="stat"><div class="num">¥22 — $212</div><div class="label">Price Range</div></div>
+</div>
+
+<div class="container">
+
+<section>
+  <h2>💰 Price Comparison Across Platforms</h2>
+  <table class="price-table">
+    <thead>
+      <tr>
+        <th>Platform</th>
+        <th>Product</th>
+        <th>Price</th>
+        <th>MOQ</th>
+        <th>Seller</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="plat"><div class="dot platform-rakumart"></div> Rakumart (1688)</div></td>
+        <td style="max-width:250px;font-size:13px">Q8领夹式三合一接口无线领夹麦克风直播降噪收音话筒</td>
+        <td><div class="price">¥35.80</div><div class="price-cny">~R$184</div></td>
+        <td>1</td>
+        <td class="seller">—</td>
+        <td><a href="https://www.rakumart.com/product/887691683594" target="_blank">View →</a></td>
+      </tr>
+      <tr>
+        <td><div class="plat"><div class="dot platform-rakumart"></div> Rakumart (1688)</div></td>
+        <td style="max-width:250px;font-size:13px">新无线领夹麦克风带数显充电盒直播视频录制降噪麦克风</td>
+        <td><div class="price">¥31.20</div><div class="price-cny">~R$160</div></td>
+        <td>1</td>
+        <td class="seller">—</td>
+        <td><a href="https://www.rakumart.com/product/717764085719" target="_blank">View →</a></td>
+      </tr>
+      <tr>
+        <td><div class="plat"><div class="dot platform-rakumart"></div> Rakumart (1688)</div></td>
+        <td style="max-width:250px;font-size:13px">新款私模J81无线领夹麦克风智能降噪迷你话筒</td>
+        <td><div class="price">¥22.00</div><div class="price-cny">~R$113</div></td>
+        <td>1</td>
+        <td class="seller">—</td>
+        <td><a href="https://www.rakumart.com/product/919825164148" target="_blank">View →</a></td>
+      </tr>
+      <tr>
+        <td><div class="plat"><div class="dot platform-dhgate"></div> DHgate</div></td>
+        <td style="max-width:250px;font-size:13px">Mini Wireless Lavalier Lapel Microphone for iPhone Android Type-C</td>
+        <td><div class="price price-usd">$11.67</div><div class="price-cny">~R$60</div></td>
+        <td>3</td>
+        <td class="seller">ecsale007</td>
+        <td><a href="https://www.dhgate.com/product/mini-wireless-lavalier-lapel-microphone-for/1085534465.html" target="_blank">View →</a></td>
+      </tr>
+      <tr>
+        <td><div class="plat"><div class="dot platform-dhgate"></div> DHgate</div></td>
+        <td style="max-width:250px;font-size:13px">BOYA Mini Wireless Lavalier Lapel Microphone iPhone iPad Type-C</td>
+        <td><div class="price price-usd">$40.19</div><div class="price-cny">~R$207</div></td>
+        <td>1</td>
+        <td class="seller">donald_store</td>
+        <td><a href="https://www.dhgate.com/product/boya-mini-wireless-lavalier-lapel-microphone/1103390755.html" target="_blank">View →</a></td>
+      </tr>
+      <tr>
+        <td><div class="plat"><div class="dot platform-alibaba"></div> Alibaba</div></td>
+        <td style="max-width:250px;font-size:13px">Live Streaming Professional Wireless Collar Clip Lavalier Microphone</td>
+        <td><div class="price price-usd">$38.00</div><div class="price-cny">~R$196</div></td>
+        <td>—</td>
+        <td class="seller">Dongguan Huanyin Electronic</td>
+        <td><a href="https://www.alibaba.com" target="_blank">View →</a></td>
+      </tr>
+      <tr>
+        <td><div class="plat"><div class="dot platform-alibaba"></div> Alibaba</div></td>
+        <td style="max-width:250px;font-size:13px">Lavalier Lapel Microphone Clip Microphone Adhesive Wireless</td>
+        <td><div class="price price-usd">$4.80</div><div class="price-cny">~R$25</div></td>
+        <td>—</td>
+        <td class="seller">Mix Tech Co., Ltd.</td>
+        <td><a href="https://www.alibaba.com" target="_blank">View →</a></td>
+      </tr>
+      <tr>
+        <td><div class="plat"><div class="dot platform-pindau"></div> Pindau (1688)</div></td>
+        <td style="max-width:250px;font-size:13px">Microfone de lapela sem fio segmento u transmissão ao vivo</td>
+        <td><div class="price">¥9,000</div><div class="price-cny">~R$46,170 (bulk)</div></td>
+        <td>1</td>
+        <td class="seller">1688 supplier</td>
+        <td><a href="https://www.pindau.com.br/produto/983966371553" target="_blank">View →</a></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div class="insight">
+    <div class="title">💡 Key Insight</div>
+    <div class="text">The same product (wireless lapel mic, Type-C, noise reduction) ranges from <strong>¥22 (~R$113)</strong> on 1688 via Rakumart to <strong>$40 (~R$207)</strong> on DHgate. The cheapest factory-direct option is <strong>$4.80 (~R$25)</strong> on Alibaba (MOQ likely 100+). For small batch, DHgate at $11.67 MOQ 3 is the best entry point.</div>
+  </div>
+</section>
+
+<section>
+  <h2>🖼️ Product Images <span class="badge">CLIP-embedded for cross-platform matching</span></h2>
+  <div class="image-grid">
+    <div class="image-card">
+      <img src="https://cbu01.alicdn.com/img/ibank/O1CN01dG1P7M1y2DOHlQB8S_!!2212806287984-0-cib.jpg" alt="Q8 Wireless Mic">
+      <div class="info">
+        <div class="name">Q8 三合一接口无线领夹麦克风</div>
+        <div class="plat-price">
+          <span class="plat" style="background:#3b82f6">rakumart</span>
+          <span class="price">¥35.80</span>
+        </div>
+      </div>
+    </div>
+    <div class="image-card">
+      <img src="https://cbu01.alicdn.com/img/ibank/O1CN01cUlYFZ27lrTFSkW9l_!!2212806287984-0-cib.jpg" alt="Digital Display Mic">
+      <div class="info">
+        <div class="name">无线领夹麦克风带数显充电盒</div>
+        <div class="plat-price">
+          <span class="plat" style="background:#3b82f6">rakumart</span>
+          <span class="price">¥31.20</span>
+        </div>
+      </div>
+    </div>
+    <div class="image-card">
+      <img src="https://cbu01.alicdn.com/img/ibank/O1CN01bZwsOB1ZjOOjbV4F6_!!2212806287984-0-cib.jpg" alt="J81 Wireless Mic">
+      <div class="info">
+        <div class="name">J81 无线领夹麦克风智能降噪</div>
+        <div class="plat-price">
+          <span class="plat" style="background:#3b82f6">rakumart</span>
+          <span class="price">¥22.00</span>
+        </div>
+      </div>
+    </div>
+    <div class="image-card">
+      <img src="https://cbu01.alicdn.com/img/ibank/O1CN01xa3lzD23mzuwvIzLY_!!2212806287984-0-cib.jpg" alt="Professional Wireless Mic">
+      <div class="info">
+        <div class="name">无线麦克风领夹式直播专业收音</div>
+        <div class="plat-price">
+          <span class="plat" style="background:#3b82f6">rakumart</span>
+          <span class="price">¥49.00</span>
+        </div>
+      </div>
+    </div>
+    <div class="image-card">
+      <img src="https://cbu01.alicdn.com/img/ibank/O1CN015NmykD23WVQ14TmBY_!!2212532287263-0-cib.jpg" alt="Mini Condenser Mic">
+      <div class="info">
+        <div class="name">Mini microfone condensador redução ruído</div>
+        <div class="plat-price">
+          <span class="plat" style="background:#22c55e">pindau</span>
+          <span class="price">¥240</span>
+        </div>
+      </div>
+    </div>
+    <div class="image-card">
+      <img src="https://cbu01.alicdn.com/img/ibank/O1CN01ShSZsn24U38BQd2qQ_!!2218072867393-0-cib.jpg" alt="Car Navigation Mic">
+      <div class="info">
+        <div class="name">Microfone colar dupla finalidade carro</div>
+        <div class="plat-price">
+          <span class="plat" style="background:#22c55e">pindau</span>
+          <span class="price">¥230</span>
+        </div>
+      </div>
+    </div>
+    <div class="image-card">
+      <img src="https://cbu01.alicdn.com/img/ibank/O1CN01Lib0nq1DeswapThvz_!!2217446670242-0-cib.jpg" alt="Broadcast Mic">
+      <div class="info">
+        <div class="name">Microfone de colar sem fio transmissão</div>
+        <div class="plat-price">
+          <span class="plat" style="background:#22c55e">pindau</span>
+          <span class="price">¥9,000</span>
+        </div>
+      </div>
+    </div>
+    <div class="image-card">
+      <img src="//img4.dhresource.com/300x300/f3/albu/ys/s/21/111efdb3-f2e4-4e99-a30d-8ee6b524bf9e.jpg" alt="DHgate Lavalier Mic">
+      <div class="info">
+        <div class="name">Mini Wireless Lavalier Lapel Microphone</div>
+        <div class="plat-price">
+          <span class="plat" style="background:#f97316">dhgate</span>
+          <span class="price">$11.67</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>🧠 How It Works</h2>
+  <div style="background:white;border-radius:12px;padding:24px;border:1px solid #e5e5e5">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:center">
+      <div>
+        <div style="font-size:32px;margin-bottom:8px">🔍</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">1. Search</div>
+        <div style="font-size:13px;color:#666">User searches "wireless lapel microphone Type-C"</div>
+      </div>
+      <div>
+        <div style="font-size:32px;margin-bottom:8px">🧠</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">2. CLIP Matching</div>
+        <div style="font-size:13px;color:#666">Text encoded to 512-dim vector, matched against product images across all platforms</div>
+      </div>
+      <div>
+        <div style="font-size:32px;margin-bottom:8px">📊</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">3. Ranked Results</div>
+        <div style="font-size:13px;color:#666">Products ranked by image similarity confidence %, with prices and seller info</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>📈 Platform Coverage</h2>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+    <div style="background:white;border-radius:10px;padding:16px;text-align:center;border:1px solid #e5e5e5">
+      <div style="font-size:20px;font-weight:700">48</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase">DHgate</div>
+      <div style="font-size:10px;color:#f97316;margin-top:4px">90+ fields/product</div>
+    </div>
+    <div style="background:white;border-radius:10px;padding:16px;text-align:center;border:1px solid #e5e5e5">
+      <div style="font-size:20px;font-weight:700">20</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase">Rakumart</div>
+      <div style="font-size:10px;color:#3b82f6;margin-top:4px">1688-linked</div>
+    </div>
+    <div style="background:white;border-radius:10px;padding:16px;text-align:center;border:1px solid #e5e5e5">
+      <div style="font-size:20px;font-weight:700">14</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase">Alibaba</div>
+      <div style="font-size:10px;color:#eab308;margin-top:4px">Factory direct</div>
+    </div>
+    <div style="background:white;border-radius:10px;padding:16px;text-align:center;border:1px solid #e5e5e5">
+      <div style="font-size:20px;font-weight:700">2,000+</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase">Pindau</div>
+      <div style="font-size:10px;color:#22c55e;margin-top:4px">1688 + PT-BR</div>
+    </div>
+    <div style="background:white;border-radius:10px;padding:16px;text-align:center;border:1px solid #e5e5e5">
+      <div style="font-size:20px;font-weight:700">30</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase">Made-in-China</div>
+      <div style="font-size:10px;color:#ef4444;margin-top:4px">Titles only</div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="container">
+    arbitlens — Cross-marketplace product matching · Built with CLIP image embeddings · Data scraped May 27, 2026
+  </div>
+</footer>
+
+</body>
+</html>

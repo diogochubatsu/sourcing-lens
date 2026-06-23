@@ -1,38 +1,57 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.venv/
-venv/
-*.egg
+# dependency directories
+node_modules/
 
-# Environment
-config/.env
+# next.js build output
+.next/
+out/
+
+# staging
+#scripts/1688/output/
+scripts/1688/logs/
+
+# storage and data (often contain large/private files)
+storage/
+data/
+data/1688/datalake/
+storage/*.db-*
+storage/*.db-wal
+storage/*.db-shm
+
+# playwright cache
+.cache/ms-playwright/
+
+# foundry
+.foundry/
+
+# env files
 .env
-*.env.local
+.env.local
+.env.*.local
 
-# Data
-data/images/
-data/*.json
-tmp/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
+# misc
 .DS_Store
-Thumbs.db
+*.tsbuildinfo
+package-lock.json
+.worktrees/
 
-# Logs
-*.log
+# Python virtualenv
+.venv-translate/
 
-# Temp screenshots from vision analysis
-*.png
-/ml_*.png
+# ML models (large files)
+models/
 
-# Subagent temp scripts
-/tmp/
-config/decodo_*.key
+# HuggingFace cache
+hf-cache/
+
+# Translation temp files
+data/1688/rankings/_*.json
+data/1688/rankings/*.log
+
+# Script output artifacts
+scripts/outputs/
+# Decodo/GCS override (local only)
+.env.gcs-v2
+.cache/
+# npm cache (should never be tracked)
+.npm/
+.venv/

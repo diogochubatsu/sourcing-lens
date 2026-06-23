@@ -1,0 +1,308 @@
+[
+  {
+    "name": "F11-2 3-in-1 Wireless Lavalier Microphone Type C H",
+    "platforms": [
+      {
+        "platform": "made-in-china",
+        "label": "Made-in-China",
+        "color": "#ef4444",
+        "name": "F11-2 3-in-1 Wireless Lavalier Microphone Type C Hands-Free ",
+        "price": "$1.59",
+        "brl": "R$9.05",
+        "confidence": 100,
+        "grade": "green",
+        "explanation": "seed",
+        "signals": "",
+        "url": "https://kelly19951009.en.made-in-china.com/product/QtEYGRqMTVro/China-F11-2-3-in-1-Wireless-Lavalier-Microphone-Type-C-Hands-Free-Reporting-for-Phone-Interviews-Street-Walks-Lapel-Microphone.html",
+        "models": "set()"
+      },
+      {
+        "platform": "alibaba",
+        "label": "Alibaba",
+        "color": "#eab308",
+        "name": "Professional Wireless Lavalier Lapel Microphone USB Type-C f",
+        "price": "$1.90",
+        "brl": "R$10.81",
+        "confidence": 63.2,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, compatible price, same category",
+        "signals": "image: 82%, title: 34%, model: 30%, price: 100%, category: 100%",
+        "url": "https://www.alibaba.com/product-detail/Professional-Wireless-Lavalier-Lapel-Microphone-USB_1601399368574.html",
+        "models": "set()"
+      },
+      {
+        "platform": "rakumart-br-alibaba",
+        "label": "Rakumart BR Alibaba",
+        "color": "#06b6d4",
+        "name": "Melhor Preço 2 em 1 Portátil Mini Microfone Sem Fio K8 K9 La",
+        "price": "R$23.67",
+        "brl": "R$23.67",
+        "confidence": 51.2,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, same category",
+        "signals": "image: 74%, title: 37%, model: 30%, price: 40%, category: 60%",
+        "url": "https://www.alibaba.com/product-detail/Best-Price-2-in-1-Portable_1600996292318.html",
+        "models": "set()"
+      },
+      {
+        "platform": "dhgate",
+        "label": "DHgate",
+        "color": "#f97316",
+        "name": "Type C Mini Wireless Lavalier Microphone 1 To 2 Noise Reduct",
+        "price": "$11.36",
+        "brl": "R$64.64",
+        "confidence": 45.1,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, matching keywords, same category",
+        "signals": "image: 77%, title: 60%, model: 30%, price: 5%, category: 80%",
+        "url": "https://www.dhgate.com/product/type-c-mini-wireless-lavalier-microphone/1012257974.html?d1_page_num=1#s1-7-1;searl|3915347496:8",
+        "models": "set()"
+      },
+      {
+        "platform": "pindau",
+        "label": "Pindau (1688)",
+        "color": "#22c55e",
+        "name": "Q8 Lavalier Type Interface 3-em-1 Microfone de lapela sem fi",
+        "price": "R$1.99",
+        "brl": "R$1.99",
+        "confidence": 41.5,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, same category",
+        "signals": "image: 61%, title: 37%, model: 30%, price: 20%, category: 75%",
+        "url": "https://www.pindau.com.br/produto/958999342126",
+        "models": "set()"
+      }
+    ],
+    "bestPrice": "R$1.99",
+    "bestPlat": "Pindau (1688)",
+    "models": "{'K8', 'Q8', 'K9', 'F11'}"
+  },
+  {
+    "name": "Original K9 Lavalier Wireless Microphone Portable ",
+    "platforms": [
+      {
+        "platform": "made-in-china",
+        "label": "Made-in-China",
+        "color": "#ef4444",
+        "name": "Original K9 Lavalier Wireless Microphone Portable Dual Lapel",
+        "price": "$0.99",
+        "brl": "R$5.63",
+        "confidence": 100,
+        "grade": "green",
+        "explanation": "seed",
+        "signals": "",
+        "url": "https://ahxianwei.en.made-in-china.com/product/YTnUvOeoXrHj/China-Original-K9-Lavalier-Wireless-Microphone-Portable-Dual-Lapel-Mic-Type-C-3-5mm-Professional-Audio-Video-Recording-Teaching.html",
+        "models": "set()"
+      },
+      {
+        "platform": "alibaba",
+        "label": "Alibaba",
+        "color": "#eab308",
+        "name": "Smart Noise Reduction K8 K9 Factory Portable Stereo Live Int",
+        "price": "$2.75",
+        "brl": "R$15.65",
+        "confidence": 70.5,
+        "grade": "green",
+        "explanation": "Matched by: image similarity, matching keywords, same model ({'K9'}), same category",
+        "signals": "image: 67%, title: 68%, model: 100%, price: 40%, category: 60%",
+        "url": "https://www.alibaba.com/product-detail/Smart-Noise-Reduction-K8-K9-Factory_1600446581883.html",
+        "models": "{'K9'}"
+      },
+      {
+        "platform": "pindau",
+        "label": "Pindau (1688)",
+        "color": "#22c55e",
+        "name": "explosão transfronteiriça rosa K9 colar sem fio\nMicrofone cl",
+        "price": "R$11.00",
+        "brl": "R$11.00",
+        "confidence": 44.6,
+        "grade": "yellow",
+        "explanation": "Matched by: same model ({'K9'}), compatible price, same category",
+        "signals": "image: 54%, title: 20%, model: 100%, price: 80%, category: 75%",
+        "url": "https://www.pindau.com.br/produto/726645671155",
+        "models": "{'K9'}"
+      },
+      {
+        "platform": "dhgate",
+        "label": "DHgate",
+        "color": "#f97316",
+        "name": "Mini Wireless Lavalier Lapel Microphone for iPhone for Andro",
+        "price": "$11.67",
+        "brl": "R$66.40",
+        "confidence": 43.8,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, same category",
+        "signals": "image: 75%, title: 48%, model: 30%, price: 5%, category: 100%",
+        "url": "https://www.dhgate.com/product/mini-wireless-lavalier-lapel-microphone-for/1085534465.html?d1_page_num=1#s1-5-1;searl|3915347496:6",
+        "models": "set()"
+      }
+    ],
+    "bestPrice": "R$5.63",
+    "bestPlat": "Made-in-China",
+    "models": "{'K8', 'K9'}"
+  },
+  {
+    "name": "K9 Mini Lapel Microphone Portable Noise Live Strea",
+    "platforms": [
+      {
+        "platform": "made-in-china",
+        "label": "Made-in-China",
+        "color": "#ef4444",
+        "name": "K9 Mini Lapel Microphone Portable Noise Live Stream Type C P",
+        "price": "$2.30",
+        "brl": "R$13.09",
+        "confidence": 100,
+        "grade": "green",
+        "explanation": "seed",
+        "signals": "",
+        "url": "https://haizhitrade.en.made-in-china.com/product/ABuxwMhObtRg/China-K9-Mini-Lapel-Microphone-Portable-Noise-Live-Stream-Type-C-Phone-Wireless-Microphone.html",
+        "models": "set()"
+      },
+      {
+        "platform": "pindau",
+        "label": "Pindau (1688)",
+        "color": "#22c55e",
+        "name": "Microfone de lapela Mini Microfone pequeno portátil Mukbang ",
+        "price": "R$24.00",
+        "brl": "R$24.00",
+        "confidence": 50.3,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, compatible price, same category",
+        "signals": "image: 67%, title: 32%, model: 30%, price: 80%, category: 50%",
+        "url": "https://www.pindau.com.br/produto/957075766026",
+        "models": "set()"
+      },
+      {
+        "platform": "rakumart-br-alibaba",
+        "label": "Rakumart BR Alibaba",
+        "color": "#06b6d4",
+        "name": "Microfone de Lapela Sem Fio Profissional Portátil CYKE H02 2",
+        "price": "R$40.33",
+        "brl": "R$40.33",
+        "confidence": 41.3,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, same category",
+        "signals": "image: 70%, title: 30%, model: 30%, price: 20%, category: 60%",
+        "url": "https://www.alibaba.com/product-detail/CYKE-H02-Portable-2-in-1_1601296563074.html",
+        "models": "set()"
+      },
+      {
+        "platform": "alibaba",
+        "label": "Alibaba",
+        "color": "#eab308",
+        "name": "Microphones Manufacturer Mic with Noise Reduction 2.4GHz Lap",
+        "price": "$3.75",
+        "brl": "R$21.34",
+        "confidence": 40.7,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, compatible price",
+        "signals": "image: 68%, title: 24%, model: 30%, price: 80%, category: 40%",
+        "url": "https://www.alibaba.com/product-detail/Microphones-Manufacturer-Mic-with-Noise-Reduction_1601488039913.html",
+        "models": "set()"
+      }
+    ],
+    "bestPrice": "R$13.09",
+    "bestPlat": "Made-in-China",
+    "models": "{'CYKE', 'K9', 'H02'}"
+  },
+  {
+    "name": "navegação do carro colar tipo microfone de dupla f",
+    "platforms": [
+      {
+        "platform": "pindau",
+        "label": "Pindau (1688)",
+        "color": "#22c55e",
+        "name": "navegação do carro colar tipo microfone de dupla finalidade,",
+        "price": "¥230.00",
+        "brl": "R$179.40",
+        "confidence": 100,
+        "grade": "green",
+        "explanation": "seed",
+        "signals": "",
+        "url": "https://www.pindau.com.br/produto/861380439414",
+        "models": "set()"
+      },
+      {
+        "platform": "rakumart-br-alibaba",
+        "label": "Rakumart BR Alibaba",
+        "color": "#06b6d4",
+        "name": "Microfone de Lapela Mini Atacado de Fábrica com Clipe para C",
+        "price": "R$124.42",
+        "brl": "R$124.42",
+        "confidence": 62.9,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, compatible price, same category",
+        "signals": "image: 69%, title: 35%, model: 50%, price: 100%, category: 100%",
+        "url": "https://www.alibaba.com/product-detail/Factory-Wholesale-Mini-Lapel-Clip-on_1600160039474.html",
+        "models": "set()"
+      },
+      {
+        "platform": "made-in-china",
+        "label": "Made-in-China",
+        "color": "#ef4444",
+        "name": "Dual Mini Clip-on Wireless Microphone Lapel for Camera Compu",
+        "price": "$11.86",
+        "brl": "R$67.48",
+        "confidence": 42.3,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, same category",
+        "signals": "image: 69%, title: 20%, model: 50%, price: 40%, category: 67%",
+        "url": "https://orangame.en.made-in-china.com/product/eZtGwSqdebhO/China-Dual-Mini-Clip-on-Wireless-Microphone-Lapel-for-Camera-Computer.html",
+        "models": "set()"
+      }
+    ],
+    "bestPrice": "R$67.48",
+    "bestPlat": "Made-in-China",
+    "models": ""
+  },
+  {
+    "name": "fonte transfronteiriça fábrica um a dois microfone",
+    "platforms": [
+      {
+        "platform": "pindau",
+        "label": "Pindau (1688)",
+        "color": "#22c55e",
+        "name": "fonte transfronteiriça fábrica um a dois microfone de colar ",
+        "price": "¥760.00",
+        "brl": "R$592.80",
+        "confidence": 100,
+        "grade": "green",
+        "explanation": "seed",
+        "signals": "",
+        "url": "https://www.pindau.com.br/produto/932741198542",
+        "models": "set()"
+      },
+      {
+        "platform": "rakumart-br-alibaba",
+        "label": "Rakumart BR Alibaba",
+        "color": "#06b6d4",
+        "name": "Microfone de Lapela Sem Fio Mini BOYA BOYA para iPhone Andro",
+        "price": "R$370.88",
+        "brl": "R$370.88",
+        "confidence": 63.3,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, matching keywords, compatible price, same category",
+        "signals": "image: 64%, title: 68%, model: 30%, price: 80%, category: 100%",
+        "url": "https://www.alibaba.com/product-detail/BOYA-BOYA-Mini-Wireless-Lavalier-Lapel_1601274353057.html",
+        "models": "set()"
+      },
+      {
+        "platform": "dhgate",
+        "label": "DHgate",
+        "color": "#f97316",
+        "name": "Xinmic Wireless Lavalier Lapel Microphone Noise Cancel Live ",
+        "price": "$51.15",
+        "brl": "R$291.04",
+        "confidence": 42.0,
+        "grade": "yellow",
+        "explanation": "Matched by: image similarity, same category",
+        "signals": "image: 60%, title: 28%, model: 50%, price: 40%, category: 75%",
+        "url": "https://www.dhgate.com/product/xinmic-wireless-lavalier-lapel-microphone/1106617998.html?d1_page_num=1#s1-4-1;searl|3915347496:5",
+        "models": "set()"
+      }
+    ],
+    "bestPrice": "R$291.04",
+    "bestPlat": "DHgate",
+    "models": "{'BOYA'}"
+  }
+]

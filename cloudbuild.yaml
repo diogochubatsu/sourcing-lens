@@ -1,0 +1,32 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/project-18ce40b8-a806-441c-9c4/arbitlens-repo/arbitlens-v2', '.']
+    dir: '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/project-18ce40b8-a806-441c-9c4/arbitlens-repo/arbitlens-v2']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'arbitlens-v2'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/project-18ce40b8-a806-441c-9c4/arbitlens-repo/arbitlens-v2'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '3'
+
+images:
+  - 'us-central1-docker.pkg.dev/project-18ce40b8-a806-441c-9c4/arbitlens-repo/arbitlens-v2'

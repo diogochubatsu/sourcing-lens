@@ -1,0 +1,402 @@
+[
+  {
+    "query": "wireless lapel microphone",
+    "products": 15,
+    "clusters": 2,
+    "platforms": 5,
+    "time_s": 5.3,
+    "status": "OK"
+  },
+  {
+    "query": "bluetooth headphone",
+    "products": 12,
+    "clusters": 3,
+    "platforms": 4,
+    "time_s": 4.9,
+    "status": "OK"
+  },
+  {
+    "query": "wireless charger",
+    "products": 14,
+    "clusters": 3,
+    "platforms": 5,
+    "time_s": 5.7,
+    "status": "OK"
+  },
+  {
+    "query": "phone case iphone 15",
+    "products": 14,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.2,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "usb cable type c",
+    "products": 15,
+    "clusters": 5,
+    "platforms": 5,
+    "time_s": 5.9,
+    "status": "OK"
+  },
+  {
+    "query": "power bank 10000mah",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 5.9,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "wireless earbuds bluetooth",
+    "products": 14,
+    "clusters": 2,
+    "platforms": 5,
+    "time_s": 6.1,
+    "status": "OK"
+  },
+  {
+    "query": "smart watch fitness tracker",
+    "products": 13,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.1,
+    "status": "OK"
+  },
+  {
+    "query": "portable bluetooth speaker",
+    "products": 14,
+    "clusters": 3,
+    "platforms": 5,
+    "time_s": 5.5,
+    "status": "OK"
+  },
+  {
+    "query": "webcam hd 1080p",
+    "products": 15,
+    "clusters": 4,
+    "platforms": 5,
+    "time_s": 6.4,
+    "status": "OK"
+  },
+  {
+    "query": "sunglasses polarized",
+    "products": 12,
+    "clusters": 0,
+    "platforms": 4,
+    "time_s": 6.2,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "leather wallet men",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.3,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "running shoes women",
+    "products": 11,
+    "clusters": 2,
+    "platforms": 4,
+    "time_s": 6.4,
+    "status": "OK"
+  },
+  {
+    "query": "backpack laptop 15 inch",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.2,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "watch automatic mechanical",
+    "products": 12,
+    "clusters": 0,
+    "platforms": 4,
+    "time_s": 6.2,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "led strip lights rgb",
+    "products": 13,
+    "clusters": 2,
+    "platforms": 5,
+    "time_s": 7.2,
+    "status": "OK"
+  },
+  {
+    "query": "air purifier hepa",
+    "products": 12,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.6,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "robot vacuum cleaner",
+    "products": 14,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.3,
+    "status": "OK"
+  },
+  {
+    "query": "coffee maker automatic",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.0,
+    "status": "OK"
+  },
+  {
+    "query": "electric toothbrush sonic",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.3,
+    "status": "OK"
+  },
+  {
+    "query": "hair dryer professional",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 5.9,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "makeup brush set",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.2,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "facial cleanser foam",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.4,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "nail polish gel uv",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.2,
+    "status": "OK"
+  },
+  {
+    "query": "lipstick matte long lasting",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.7,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "yoga mat thick exercise",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.1,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "resistance bands set",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.3,
+    "status": "OK"
+  },
+  {
+    "query": "jump rope weighted",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.7,
+    "status": "OK"
+  },
+  {
+    "query": "water bottle stainless steel",
+    "products": 12,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.4,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "gym gloves weightlifting",
+    "products": 14,
+    "clusters": 2,
+    "platforms": 5,
+    "time_s": 9.6,
+    "status": "OK"
+  },
+  {
+    "query": "remote control car fast",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.1,
+    "status": "OK"
+  },
+  {
+    "query": "drone camera 4k",
+    "products": 10,
+    "clusters": 0,
+    "platforms": 4,
+    "time_s": 6.5,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "puzzle 1000 pieces",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.5,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "lego building blocks",
+    "products": 14,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.2,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "stuffed animal plush toy",
+    "products": 14,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.2,
+    "status": "OK"
+  },
+  {
+    "query": "car phone mount magnetic",
+    "products": 12,
+    "clusters": 1,
+    "platforms": 4,
+    "time_s": 6.2,
+    "status": "OK"
+  },
+  {
+    "query": "dash cam front and rear",
+    "products": 3,
+    "clusters": 0,
+    "platforms": 1,
+    "time_s": 6.1,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "tire pressure gauge",
+    "products": 9,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.3,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "car air freshener",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 5.8,
+    "status": "OK"
+  },
+  {
+    "query": "led headlights h11",
+    "products": 11,
+    "clusters": 0,
+    "platforms": 4,
+    "time_s": 4.9,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "garden hose expandable",
+    "products": 10,
+    "clusters": 0,
+    "platforms": 4,
+    "time_s": 6.0,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "solar garden lights",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.1,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "plant pot ceramic",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.8,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "lawn sprinkler automatic",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.7,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "bird feeder squirrel proof",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 6.0,
+    "status": "NO_CLUSTERS"
+  },
+  {
+    "query": "dog collar adjustable",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.3,
+    "status": "OK"
+  },
+  {
+    "query": "cat toy interactive",
+    "products": 15,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.5,
+    "status": "OK"
+  },
+  {
+    "query": "pet bed orthopedic",
+    "products": 15,
+    "clusters": 2,
+    "platforms": 5,
+    "time_s": 6.7,
+    "status": "OK"
+  },
+  {
+    "query": "dog leash retractable",
+    "products": 13,
+    "clusters": 1,
+    "platforms": 5,
+    "time_s": 6.6,
+    "status": "OK"
+  },
+  {
+    "query": "fish tank filter",
+    "products": 15,
+    "clusters": 0,
+    "platforms": 5,
+    "time_s": 5.6,
+    "status": "NO_CLUSTERS"
+  }
+]

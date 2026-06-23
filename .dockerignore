@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+npm-debug.log
+data/1688
+data/1688-test
+scripts/1688
+scripts/outputs
+scripts/ranking
+scripts/sql
+scripts/migrations
+scripts/*.py
+scripts/*.ts
+scripts/*.js
+scripts/*.sh
+*.md
+!scripts/arbitlens
