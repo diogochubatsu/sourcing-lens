@@ -553,7 +553,7 @@
         </div>
         
         <!-- SCHEMA SECTION -->
-        <div id="schema-toggle" onclick="document.getElementById('schema-content').style.display=document.getElementById('schema-content').style.display===\"none\"?\"block\":\"none\";" style="cursor:pointer; padding:12px 16px; background:#f8f9fa; border:1px solid #e5e7eb; border-radius:8px; margin-bottom:16px; display:flex; align-items:center; gap:8px; font-size:13px; color:#374151; font-weight:600;">
+        <div id="schema-toggle" onclick="toggleSchema()" style="cursor:pointer; padding:12px 16px; background:#f8f9fa; border:1px solid #e5e7eb; border-radius:8px; margin-bottom:16px; display:flex; align-items:center; gap:8px; font-size:13px; color:#374151; font-weight:600;">
             📐 <span>Schema: products (19 columns)</span> <a href="/schema" target="_blank" style="margin-left:auto; color:#6b7280; font-size:11px; text-decoration:underline;">Full schema page →</a>
         </div>
         <div id="schema-content" style="display:none; margin-bottom:24px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
@@ -918,6 +918,11 @@
             renderCurrentCategory();
         }
         
+        function toggleSchema() {
+            var el = document.getElementById('schema-content');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
         function clearCategoryFilter() {
             document.getElementById('cat-l1').value = '';
             document.getElementById('cat-l2').value = '';
