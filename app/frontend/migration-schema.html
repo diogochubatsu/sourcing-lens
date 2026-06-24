@@ -230,7 +230,43 @@ conn.commit()
         </div>
 
         
+        
         <div class="section">
+            <h2>4. Migration Script</h2>
+
+            <div class="note">
+                <p><strong>Script:</strong> <code>scripts/migrate_to_importasimples.py</code></p>
+                <p style="margin-top:8px;"><strong>Tested:</strong> 5 products inserted successfully (2026-06-24)</p>
+                <p style="margin-top:8px;"><strong>Connection:</strong> ✅ IP authorized, SSL working</p>
+            </div>
+
+            <h3>Usage</h3>
+            <div class="sql-block">
+<span class="comment"># Dry run — preview without writing</span>
+python3 scripts/migrate_to_importasimples.py --dry-run
+
+<span class="comment"># Test with 5 products</span>
+python3 scripts/migrate_to_importasimples.py --limit 5
+
+<span class="comment"># Full migration (1,079 products, ~11 batches of 100)</span>
+python3 scripts/migrate_to_importasimples.py
+
+<span class="comment"># Verify counts after migration</span>
+python3 scripts/migrate_to_importasimples.py --verify
+            </div>
+
+            <h3>What it does</h3>
+            <ul>
+                <li>Fetches all active products from ArbitLens (arbtbr)</li>
+                <li>Transforms: platform→marketplace, builds source_id, computes category_raw, etc.</li>
+                <li>Stores CLIP embedding in raw_data JSONB (as requested)</li>
+                <li>UPSERTs in batches of 100 with ON CONFLICT handling</li>
+                <li>price_brl = NULL for amazon_us (USD prices, no conversion)</li>
+                <li>Reports inserted/updated/error counts per batch</li>
+            </ul>
+        </div>
+
+<div class="section">
             <h2>❓ Questions for ImportaSimples Agent</h2>
 
             <div class="note" style="border-color: #d29922;">
