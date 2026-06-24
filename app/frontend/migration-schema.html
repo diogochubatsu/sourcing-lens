@@ -229,7 +229,57 @@ conn.commit()
             </table>
         </div>
 
-        <p style="text-align:center; color:#484f58; font-size:12px; margin-top:40px; padding-bottom:24px;">
+        
+        <div class="section">
+            <h2>❓ Questions for ImportaSimples Agent</h2>
+
+            <div class="note" style="border-color: #d29922;">
+                <p><strong>Status:</strong> Awaiting answers from main ImportaSimples agent before creating migration script.</p>
+            </div>
+
+            <table>
+                <thead><tr><th>#</th><th>Question</th><th>Context</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="cn">1</td>
+                        <td class="cd">Is our IP (<code>136.111.212.52</code>) authorized in GCP Cloud SQL → Networking?</td>
+                        <td class="src">Need to test connection before running migration script</td>
+                    </tr>
+                    <tr>
+                        <td class="cn">2</td>
+                        <td class="cd">What batch size for UPSERT? We have ~1,079 products to push.</td>
+                        <td class="src">Proposing batches of 100 to keep transactions short</td>
+                    </tr>
+                    <tr>
+                        <td class="cn">3</td>
+                        <td class="cd">Full sync or delta? Last arbtlly sync was 2026-06-23. Should we push all 1,079 or only since a specific date?</td>
+                        <td class="src">Currently 577 arbtlly + 475 arbitlens = 1,052 in bronze_products</td>
+                    </tr>
+                    <tr>
+                        <td class="cn">4</td>
+                        <td class="cd">We dropped <code>raw_data</code> from our schema. Should we reconstruct it with available fields (title, price, url, category) or send <code>{}</code>?</td>
+                        <td class="src">raw_data is audit trail — Silver/Gold pipelines may use it</td>
+                    </tr>
+                    <tr>
+                        <td class="cn">5</td>
+                        <td class="cd">For <code>amazon_us</code> products (USD prices): convert to BRL for <code>price_brl</code>, or leave NULL?</td>
+                        <td class="src">Proposing NULL — let Silver layer handle currency conversion</td>
+                    </tr>
+                    <tr>
+                        <td class="cn">6</td>
+                        <td class="cd">Set <code>silver_processed</code> to FALSE on every UPSERT?</td>
+                        <td class="src">Silver pipeline should flip to TRUE after processing</td>
+                    </tr>
+                    <tr>
+                        <td class="cn">7</td>
+                        <td class="cd">After UPSERT, does Silver/Gold pipeline run automatically, or do we need to signal it somehow?</td>
+                        <td class="src">Need to know if there's a webhook, cron, or manual trigger</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+<p style="text-align:center; color:#484f58; font-size:12px; margin-top:40px; padding-bottom:24px;">
             arbt.ly — See the arbitrage. Before everyone else.
         </p>
     </div>
