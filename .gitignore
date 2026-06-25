@@ -58,3 +58,6 @@ scripts/outputs/
 
 # Local secrets (config keys, env)
 config/*.key
+config/gcp-*.json
+__pycache__/
+*.pyc

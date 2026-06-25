@@ -4,7 +4,7 @@ migrate_to_importasimples.py — Migrate ArbitLens products to ImportaSimples br
 
 Source: arbtbr (localhost:5432)
 Destination: importasimples_products (34.170.210.220:5432)
-Source value: 'arbtlly'
+Source value: 'arbt.ly'
 source_id format: {platform}:{platform_id}
 
 Usage:
@@ -23,8 +23,8 @@ import psycopg2
 from decimal import Decimal
 
 # ── Config ────────────────────────────────────────────────────
-SOURCE_VALUE = 'arbtlly'
-SCRIPT_NAME = 'migrate_to_importasimples.py'
+SOURCE_VALUE = 'arbt.ly'
+SCRIPT_NAME = 'arbtly_to_importasimples.py'
 BATCH_SIZE = 100
 
 DEST_CONFIG = {
@@ -209,7 +209,7 @@ def run_migration(dry_run=False, limit=None, verify_only=False):
         dst_count = dst_cur.fetchone()[0]
         print(f"\n=== Verification ===")
         print(f"  Source (arbtly products): {src_count}")
-        print(f"  Destination (arbtlly in bronze): {dst_count}")
+        print(f"  Destination (arbt.ly in bronze): {dst_count}")
         print(f"  Match: {'✅' if src_count == dst_count else '⚠️ MISMATCH'}")
         src_conn.close()
         dst_conn.close()
